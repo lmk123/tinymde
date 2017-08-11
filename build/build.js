@@ -6,7 +6,8 @@ fs.emptyDirSync(path.resolve(__dirname, '../dist'))
 
 // 编译 js
 const rollup = require('rollup')
-const buble = require('rollup-plugin-buble')
+// const buble = require('rollup-plugin-buble')
+const typescript = require('rollup-plugin-typescript2')
 // TODO 后面可能会用上，所以 package.json 里暂时不删
 // const nodeReslove = require('rollup-plugin-node-resolve')
 // const cjs = require('rollup-plugin-commonjs')
@@ -23,8 +24,8 @@ const banner = [
 ].join('\n')
 
 rollup.rollup({
-  entry: path.resolve(__dirname, '../src/index.js'),
-  plugins: [buble()]
+  entry: path.resolve(__dirname, '../src/index.ts'),
+  plugins: [typescript()]
 }).then(bundle => {
   // 输出 umd 格式
   const { code } = bundle.generate({

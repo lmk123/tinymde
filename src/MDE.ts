@@ -1,11 +1,13 @@
-import { splice4string, wrapBy } from './utils'
+import {splice4string, wrapBy} from './utils'
 
 export default class {
+  el: HTMLTextAreaElement;
+
   /**
    *  构造函数
    * @param {HTMLElement} el
    */
-  constructor (el) {
+  constructor(el: HTMLTextAreaElement) {
     this.el = el
 
     el.addEventListener('keypress', event => {
@@ -15,9 +17,8 @@ export default class {
 
   /**
    * 获取当前编辑器的内容
-   * @return {string}
    */
-  getValue () {
+  getValue(): string {
     return this.el.value
   }
 
@@ -25,26 +26,23 @@ export default class {
    * 设置当前编辑器的内容
    * @param {string} val
    */
-  setValue (val) {
+  setValue(val: string): void {
     this.el.value = val
   }
 
   /**
    * 设置当前的选中范围
-   * @param {number} start
-   * @param {number} end
    */
-  setSelection (start, end) {
+  setSelection(start: number, end: number): void {
     this.el.focus()
     this.el.setSelectionRange(start, end)
   }
 
   /**
-   * 获取编辑器当前选中区域的范围。如果没有选中文本，则 start 和 end 是相等的。
-   * @return {{start: number, end:number}} - 如果是 number，说明当前编辑器没有选中内容，则此时返回光标的位置
+   * 获取编辑器当前选中区域的范围。如果没有选中文本，则 start 和 end 是相等的
    */
-  getSelection () {
-    const { selectionStart, selectionEnd } = this.el
+  getSelection(): { start: number, end: number } {
+    const {selectionStart, selectionEnd} = this.el
 
     return {
       start: selectionStart,
@@ -54,9 +52,8 @@ export default class {
 
   /**
    * 获取选中文本
-   * @return {string}
    */
-  getSelectionText () {
+  getSelectionText(): string {
     const pos = this.getSelection()
     if (typeof pos === 'object') {
       return this.getValue().slice(pos.start, pos.end)
@@ -69,8 +66,8 @@ export default class {
    * 将当前选中文本用加粗语法包裹。
    * 如果编辑器没有选中文本，则在光标位置插入一段加粗提示。
    */
-  bold () {
-    const { start, end } = this.getSelection()
+  bold(): void {
+    const {start, end} = this.getSelection()
     const val = this.getValue()
     let selectionStart
     let selectionEnd

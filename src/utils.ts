@@ -6,13 +6,13 @@
  * @param {string} [insertStr]
  * @return {string}
  */
-export function splice4string (str, start, remove, insertStr = '') {
+export function splice4string (str: string, start: number, remove: number, insertStr: string = ''): string {
   const startString = str.slice(0, start)
   const endString = str.slice(start + remove)
   return startString + insertStr + endString
 }
 
-export function wrapBy (str, start, end, wrapStr) {
+export function wrapBy (str: string, start: number, end: number, wrapStr: string): string {
   let result = splice4string(str, start, 0, wrapStr)
   result = splice4string(result, end + wrapStr.length, 0, wrapStr)
 
