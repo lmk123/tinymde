@@ -11,7 +11,7 @@ const pkg = require('../package.json')
 
 const config = require('../rollup.config')
 const typescript = require('rollup-plugin-typescript2')
-const nodeReslove = require('rollup-plugin-node-resolve')
+const nodeResolve = require('rollup-plugin-node-resolve')
 const cjs = require('rollup-plugin-commonjs')
 
 const banner = [
@@ -46,7 +46,7 @@ rollup.rollup({
 // 输出 umd 格式的文件时，将第三方依赖打包进去
 rollup.rollup({
   entry: config.entry,
-  plugins: [cjs(), nodeReslove(), typescript()]
+  plugins: [cjs(), nodeResolve(), typescript()]
 }).then(bundle => {
   // 输出 umd 格式
   const { code } = bundle.generate({
