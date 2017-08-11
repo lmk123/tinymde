@@ -26,7 +26,7 @@ const banner = [
 rollup.rollup({
   entry: config.entry,
   plugins: [typescript()],
-  external: ['tiny-emitter']
+  external: Object.keys(pkg.dependencies)
 }).then(bundle => {
   // 输出 es 格式
   bundle.write({
