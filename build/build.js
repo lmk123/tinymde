@@ -6,14 +6,13 @@ fs.emptyDirSync(path.resolve(__dirname, '../dist'))
 
 // 编译 js
 const rollup = require('rollup')
-// const buble = require('rollup-plugin-buble')
-const typescript = require('rollup-plugin-typescript2')
-// TODO 后面可能会用上，所以 package.json 里暂时不删
-// const nodeReslove = require('rollup-plugin-node-resolve')
-// const cjs = require('rollup-plugin-commonjs')
-const scss = require('rollup-plugin-scss')
 const uglifyJS = require('uglify-js')
 const pkg = require('../package.json')
+
+const config = require('../rollup.config')
+const typescript = require('rollup-plugin-typescript2')
+const nodeReslove = require('rollup-plugin-node-resolve')
+const cjs = require('rollup-plugin-commonjs')
 
 const banner = [
   '/*!',
@@ -23,20 +22,12 @@ const banner = [
   ' */'
 ].join('\n')
 
+// 输出 cjs 和 es 格式的文件时，将第三方依赖作为外部依赖
 rollup.rollup({
-  entry: path.resolve(__dirname, '../src/index.ts'),
-  plugins: [typescript()]
+  entry: config.entry,
+  plugins: [typescript()],
+  external: ['tiny-emitter']
 }).then(bundle => {
-  // 输出 umd 格式
-  const { code } = bundle.generate({
-    format: 'umd',
-    moduleName: 'mde',
-    banner
-  })
-
-  fs.writeFile(path.resolve(__dirname, '../dist/mde.js'), code)
-  fs.writeFile(path.resolve(__dirname, '../dist/mde.min.js'), uglifyJS.minify(code, { output: { comments: /^!/ } }).code)
-
   // 输出 es 格式
   bundle.write({
     dest: path.resolve(__dirname, '../dist/mde.esm.js'),
@@ -50,4 +41,20 @@ rollup.rollup({
     format: 'cjs',
     banner
   })
+})
+
+// 输出 umd 格式的文件时，将第三方依赖打包进去
+rollup.rollup({
+  entry: config.entry,
+  plugins: [cjs(), nodeReslove(), typescript()]
+}).then(bundle => {
+  // 输出 umd 格式
+  const { code } = bundle.generate({
+    format: 'umd',
+    moduleName: config.moduleName,
+    banner
+  })
+
+  fs.writeFile(path.resolve(__dirname, '../dist/mde.js'), code)
+  fs.writeFile(path.resolve(__dirname, '../dist/mde.min.js'), uglifyJS.minify(code, { output: { comments: /^!/ } }).code)
 })
