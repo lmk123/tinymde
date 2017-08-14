@@ -1,11 +1,4 @@
-/**
- * 作用于 string 的类似 Array#splice 的方法
- * @param {string} str
- * @param {number} start
- * @param {number} remove
- * @param {string} [insertStr]
- * @return {string}
- */
+// 作用于 string 的类似 Array#splice 的方法
 export function splice4string (str: string, start: number, remove: number, insertStr: string = ''): string {
   const startString = str.slice(0, start)
   const endString = str.slice(start + remove)

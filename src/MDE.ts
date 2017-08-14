@@ -5,10 +5,6 @@ import { splice4string, wrapBy } from './utils'
 export default class extends TinyEmitter {
   el: HTMLTextAreaElement
 
-  /**
-   *  构造函数
-   * @param {HTMLElement} el
-   */
   constructor (el: HTMLTextAreaElement) {
     super()
     this.el = el
@@ -49,7 +45,7 @@ export default class extends TinyEmitter {
    * 获取编辑器当前选中区域的范围。如果没有选中文本，则 start 和 end 是相等的
    */
   getSelection (): { start: number, end: number } {
-    const {selectionStart, selectionEnd} = this.el
+    const { selectionStart, selectionEnd } = this.el
 
     return {
       start: selectionStart,
@@ -62,11 +58,7 @@ export default class extends TinyEmitter {
    */
   getSelectionText (): string {
     const pos = this.getSelection()
-    if (typeof pos === 'object') {
-      return this.getValue().slice(pos.start, pos.end)
-    } else {
-      return ''
-    }
+    return this.getValue().slice(pos.start, pos.end)
   }
 
   /**
@@ -74,7 +66,7 @@ export default class extends TinyEmitter {
    * 如果编辑器没有选中文本，则在光标位置插入一段加粗提示。
    */
   bold (): void {
-    const {start, end} = this.getSelection()
+    const { start, end } = this.getSelection()
     const val = this.getValue()
     let selectionStart
     let selectionEnd
