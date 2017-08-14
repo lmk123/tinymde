@@ -1,6 +1,5 @@
 /node_modules/
 /dist/
-/dev.js
 /.rpt2_cache/
 .DS_Store
 npm-debug.log*

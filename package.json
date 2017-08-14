@@ -3,6 +3,7 @@
   "main": "dist/mde.common.js",
   "module": "dist/mde.esm.js",
   "unpkg": "dist/mde.js",
+  "types": "dist/index.d.ts",
   "files": [
     "src",
     "dist"
