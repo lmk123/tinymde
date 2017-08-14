@@ -1,11 +1,11 @@
 {
-  "compilerOptions" : {
-    "moduleResolution" : "node" ,
-    "strictNullChecks" : true ,
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "strictNullChecks": true,
     // 使用 es6 的模块语法导入 tiny-emitter 的时候需要开启这项设置
-    "allowSyntheticDefaultImports" : true
-  } ,
-  "include" : [
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
     "src/**/*"
   ]
 }
