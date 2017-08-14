@@ -1,13 +1,38 @@
-// 作用于 string 的类似 Array#splice 的方法
-export function splice4string (str: string, start: number, remove: number, insertStr: string = ''): string {
-  const startString = str.slice(0, start)
-  const endString = str.slice(start + remove)
-  return startString + insertStr + endString
+/**
+ * 在字符串中插入一段字符串
+ * @param str - 原本的字符串
+ * @param index - 要插入字符串的位置
+ * @param insert - 要插入的字符串
+ */
+export function insertString (str: string, index: number, insert: string): string {
+  const startString = str.slice(0, index)
+  const endString = str.slice(index)
+  return startString + insert + endString
 }
 
-export function wrapBy (str: string, start: number, end: number, wrapStr: string): string {
-  let result = splice4string(str, start, 0, wrapStr)
-  result = splice4string(result, end + wrapStr.length, 0, wrapStr)
+export type IntroOutro = { intro: string, outro: string }
+export type StringOrIntroOutro = string | IntroOutro
 
-  return result
+export function getInOut (inOut: StringOrIntroOutro): IntroOutro {
+  if (typeof inOut === 'string') {
+    return {
+      intro: inOut,
+      outro: inOut
+    }
+  }
+  return inOut
+}
+
+/**
+ * 将一段字符串用指定的符号包裹
+ * @param str - 要处理的字符串
+ * @param start - 要包裹的字符串的开始位置
+ * @param end - 要包裹的字符串的结束位置
+ * @param wrapStr - 用于包裹的字符串
+ */
+export function wrapBy (str: string, start: number, end: number, wrapStr: StringOrIntroOutro): string {
+  const { intro, outro } = getInOut(wrapStr)
+
+  const result = insertString(str, start, intro)
+  return insertString(result, end + outro.length, outro)
 }

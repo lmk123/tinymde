@@ -8,5 +8,5 @@ module.exports = {
   dest: 'dist/mde.js',
   plugins: [cjs(), nodeResolve(), typescript()],
   format: 'iife',
-  moduleName: 'mde'
+  moduleName: 'MDE'
 }
