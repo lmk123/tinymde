@@ -19,7 +19,7 @@ export default class extends TinyEmitter {
   /**
    * 获取当前编辑器的内容
    */
-  getValue (): string {
+  getValue () {
     return this.el.value
   }
 
@@ -43,21 +43,13 @@ export default class extends TinyEmitter {
   /**
    * 获取编辑器当前选中区域的范围。如果没有选中文本，则 start 和 end 是相等的。
    */
-  getSelection (): { start: number, end: number } {
+  getSelection () {
     const { selectionStart, selectionEnd } = this.el
 
     return {
       start: selectionStart,
       end: selectionEnd
     }
-  }
-
-  /**
-   * 获取文本框中选中的文本。
-   */
-  getSelectionText () {
-    const pos = this.getSelection()
-    return this.getValue().slice(pos.start, pos.end)
   }
 
   /**
@@ -72,7 +64,7 @@ export default class extends TinyEmitter {
     let selectionStart
     let selectionEnd
 
-    const { intro, outro } = getInOut(introOutro)
+    let { intro, outro } = getInOut(introOutro)
 
     this.saveScroll()
     if (start === end) {

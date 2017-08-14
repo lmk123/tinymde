@@ -4,7 +4,7 @@
  * @param index - 要插入字符串的位置
  * @param insert - 要插入的字符串
  */
-export function insertString (str: string, index: number, insert: string): string {
+export function insertString (str: string, index: number, insert: string) {
   const startString = str.slice(0, index)
   const endString = str.slice(index)
   return startString + insert + endString
@@ -30,7 +30,7 @@ export function getInOut (inOut: StringOrIntroOutro): IntroOutro {
  * @param end - 要包裹的字符串的结束位置
  * @param wrapStr - 用于包裹的字符串
  */
-export function wrapBy (str: string, start: number, end: number, wrapStr: StringOrIntroOutro): string {
+export function wrapBy (str: string, start: number, end: number, wrapStr: StringOrIntroOutro) {
   const { intro, outro } = getInOut(wrapStr)
 
   const result = insertString(str, start, intro)
