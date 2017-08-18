@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
+    "module": "es2015",
     "moduleResolution": "node",
-    "target": "es5",
     "strict": true,
     "declaration": true,
+    "target": "es2015",
     // 使用 es6 的模块语法导入 tiny-emitter 的时候需要开启这项设置
     "allowSyntheticDefaultImports": true
   },

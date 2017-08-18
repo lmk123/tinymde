@@ -10,6 +10,7 @@ const uglifyJS = require('uglify-js')
 const pkg = require('../package.json')
 
 const config = require('../rollup.config')
+const buble = require('rollup-plugin-buble')
 const typescript = require('rollup-plugin-typescript2')
 const nodeResolve = require('rollup-plugin-node-resolve')
 const cjs = require('rollup-plugin-commonjs')
@@ -25,7 +26,7 @@ const banner = [
 // 输出 cjs 和 es 格式的文件时，将第三方依赖作为外部依赖
 rollup.rollup({
   entry: config.entry,
-  plugins: [typescript()],
+  plugins: [typescript(), buble()],
   external: Object.keys(pkg.dependencies)
 }).then(bundle => {
   // 输出 es 格式
@@ -46,7 +47,7 @@ rollup.rollup({
 // 输出 umd 格式的文件时，将第三方依赖打包进去
 rollup.rollup({
   entry: config.entry,
-  plugins: [cjs(), nodeResolve(), typescript()]
+  plugins: [cjs(), nodeResolve(), typescript(), buble()]
 }).then(bundle => {
   // 输出 umd 格式
   const { code } = bundle.generate({

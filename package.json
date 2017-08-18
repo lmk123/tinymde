@@ -19,13 +19,13 @@
   "devDependencies": {
     "fs-extra": "^3.0.1",
     "rollup": "^0.43.0",
+    "rollup-plugin-buble": "^0.15.0",
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-typescript2": "^0.5.0",
     "rollup-watch": "^4.3.1",
     "tslint": "^5.6.0",
     "tslint-config-standard": "^6.0.1",
-    "typescript-eslint-parser": "^5.0.1",
     "uglify-js": "^3.0.5"
   }
 }
