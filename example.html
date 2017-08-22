@@ -5,14 +5,18 @@
     <title>Title</title>
     <script src="dist/mde.js"></script>
     <style>
+      button, textarea {
+        font-size: 16px;
+      }
+
       textarea {
         max-width: 600px;
         width: 100%;
         height: 200px;
+        padding: 2px;
       }
 
       button {
-        font-size: 16px;
         padding: 5px 10px;
         margin-right: 10px;
         margin-top: 10px;
@@ -24,14 +28,14 @@
     <p>
       <button onclick="md.bold()">Bold</button>
       <button onclick="md.italic()">Italic</button>
-      <button onclick="md.bold()">Heading</button>
-      <button onclick="md.bold()">Quote</button>
+      <button onclick="md.heading(1)">Heading</button>
+      <button onclick="md.quote()">Quote</button>
       <button onclick="md.codeBlock()">Code Block</button>
-      <button onclick="md.bold()">Ordered List</button>
-      <button onclick="md.bold()">Unordered List</button>
-      <button onclick="md.bold()">Link</button>
-      <button onclick="md.bold()">Image</button>
-      <button onclick="md.bold()">Clear Format</button>
+      <button onclick="md.ol()">Ordered List</button>
+      <button onclick="md.ul()">Unordered List</button>
+      <button onclick="md.link()">Link</button>
+      <button onclick="md.image()">Image</button>
+      <button onclick="md.clear()">Clear Format</button>
     </p>
     <textarea>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at nibh felis. Nunc consequat diam et tellus tempor gravida. Donec hendrerit aliquet risus, ut tempor purus dictum sit amet. Integer sit amet lacus eget ipsum pulvinar interdum. Proin semper turpis sed placerat dapibus. Sed iaculis id nibh a viverra. Sed vitae tellus sed purus lacinia dignissim. Aenean sagittis interdum leo in molestie. Aliquam sodales in diam eu consectetur. Sed posuere a orci id imperdiet.
 

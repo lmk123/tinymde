@@ -36,3 +36,19 @@ export function wrapBy (str: string, start: number, end: number, wrapStr: String
   const result = insertString(str, start, intro)
   return insertString(result, end + outro.length, outro)
 }
+
+/**
+ * 重复字符串
+ * @type {(str, count) => string}
+ */
+export const repeat: (str: string, count: number) => string = String.prototype.repeat
+    ? function (str, count) {
+      return str.repeat(count)
+    }
+    : function (str, count) {
+      let s = ''
+      for (let i = 0; i < count; i++) {
+        s += str
+      }
+      return s
+    }

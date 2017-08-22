@@ -1,6 +1,6 @@
 import TinyEmitter from 'tiny-emitter'
 
-import { getInOut, insertString, StringOrIntroOutro, wrapBy } from './utils'
+import { getInOut, insertString, StringOrIntroOutro, wrapBy, repeat } from './utils'
 
 export default class extends TinyEmitter {
   el: HTMLTextAreaElement
@@ -53,12 +53,68 @@ export default class extends TinyEmitter {
   }
 
   /**
+   * 粗体。
+   * @param {string} tip
+   */
+  bold (tip = '') {
+    this.wrap('**', tip)
+  }
+
+  /**
+   * 斜体。
+   * @param {string} tip
+   */
+  italic (tip = '') {
+    this.wrap('_', tip)
+  }
+
+  /**
+   * 块级代码。
+   * @param {string} tip
+   */
+  codeBlock (tip = '') {
+    this.wrap({
+      intro: '```\n',
+      outro: '\n```'
+    }, tip)
+  }
+
+  /**
+   * 标题。
+   * @param {number} level
+   */
+  heading (level: 1 | 2 | 3 | 4 | 5 | 6) {
+    const { start } = this.getSelection()
+    const value = this.getValue()
+
+    // 查找离光标最近的换行符
+    let brIndex = value.lastIndexOf('\n', start) + 1
+
+    // 插入 # 号
+    this.setValue(insertString(value, brIndex, repeat('#', level) + ' '))
+  }
+
+  /**
+   * 保存滚动条位置
+   */
+  protected saveScroll () {
+    this.scrollTop = this.el.scrollTop
+  }
+
+  /**
+   * 恢复滚动条位置
+   */
+  protected restoreScroll () {
+    this.el.scrollTop = this.scrollTop
+  }
+
+  /**
    * 将文本框中被选中的文本用指定字符串包裹起来。
    * 如果文本框中没有选中文本，则在光标的位置插入一段被包裹起来的提示文本。
    * @param {string} introOutro - 用于包裹的字符串
    * @param {string} tip - 默认文本
    */
-  wrap (introOutro: StringOrIntroOutro, tip: string) {
+  protected wrap (introOutro: StringOrIntroOutro, tip: string) {
     const { start, end } = this.getSelection()
     const val = this.getValue()
     let selectionStart
@@ -78,46 +134,5 @@ export default class extends TinyEmitter {
     }
     this.setSelection(selectionStart, selectionEnd)
     this.restoreScroll()
-  }
-
-  /**
-   * 粗体。
-   * @param {string} tip
-   */
-  bold (tip = 'Bold Text') {
-    this.wrap('**', tip)
-  }
-
-  /**
-   * 斜体。
-   * @param {string} tip
-   */
-  italic (tip = 'Italic Text') {
-    this.wrap('*', tip)
-  }
-
-  /**
-   * 块级代码。
-   * @param {string} tip
-   */
-  codeBlock (tip = 'Code Block') {
-    this.wrap({
-      intro: '```\n',
-      outro: '\n```'
-    }, tip)
-  }
-
-  /**
-   * 保存滚动条位置
-   */
-  protected saveScroll () {
-    this.scrollTop = this.el.scrollTop
-  }
-
-  /**
-   * 恢复滚动条位置
-   */
-  protected restoreScroll () {
-    this.el.scrollTop = this.scrollTop
   }
 }
