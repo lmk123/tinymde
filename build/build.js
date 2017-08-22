@@ -26,7 +26,12 @@ const banner = [
 // 输出 cjs 和 es 格式的文件时，将第三方依赖作为外部依赖
 rollup.rollup({
   entry: config.entry,
-  plugins: [typescript(), buble()],
+  plugins: [
+    typescript({
+      useTsconfigDeclarationDir: true
+    }),
+    buble()
+  ],
   external: Object.keys(pkg.dependencies)
 }).then(bundle => {
   // 输出 es 格式
@@ -47,15 +52,22 @@ rollup.rollup({
 // 输出 umd 格式的文件时，将第三方依赖打包进去
 rollup.rollup({
   entry: config.entry,
-  plugins: [cjs(), nodeResolve(), typescript(), buble()]
+  plugins: [
+    cjs(),
+    nodeResolve(),
+    typescript({
+      useTsconfigDeclarationDir: true
+    }),
+    buble()
+  ]
 }).then(bundle => {
   // 输出 umd 格式
-  const { code } = bundle.generate({
+  bundle.generate({
     format: 'umd',
     moduleName: config.moduleName,
     banner
+  }).then(({ code }) => {
+    fs.writeFile(path.resolve(__dirname, '../dist/mde.js'), code)
+    fs.writeFile(path.resolve(__dirname, '../dist/mde.min.js'), uglifyJS.minify(code, { output: { comments: /^!/ } }).code)
   })
-
-  fs.writeFile(path.resolve(__dirname, '../dist/mde.js'), code)
-  fs.writeFile(path.resolve(__dirname, '../dist/mde.min.js'), uglifyJS.minify(code, { output: { comments: /^!/ } }).code)
 })

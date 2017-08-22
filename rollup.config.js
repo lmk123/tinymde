@@ -6,7 +6,13 @@ const cjs = require('rollup-plugin-commonjs')
 module.exports = {
   entry: path.resolve(__dirname, './src/index.ts'),
   dest: 'dist/mde.js',
-  plugins: [cjs(), nodeResolve(), typescript()],
+  plugins: [
+    cjs(),
+    nodeResolve(),
+    typescript({
+      useTsconfigDeclarationDir: true
+    })
+  ],
   format: 'iife',
   moduleName: 'MDE'
 }
