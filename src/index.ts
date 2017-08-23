@@ -56,7 +56,7 @@ export default class extends TinyEmitter {
    * 粗体。
    * @param {string} tip
    */
-  bold (tip = '') {
+  bold (tip?: string) {
     this.wrap('**', tip)
   }
 
@@ -64,7 +64,7 @@ export default class extends TinyEmitter {
    * 斜体。
    * @param {string} tip
    */
-  italic (tip = '') {
+  italic (tip?: string) {
     this.wrap('_', tip)
   }
 
@@ -72,11 +72,15 @@ export default class extends TinyEmitter {
    * 块级代码。
    * @param {string} tip
    */
-  codeBlock (tip = '') {
+  codeBlock (tip?: string) {
     this.wrap({
       intro: '```\n',
       outro: '\n```'
     }, tip)
+  }
+
+  test () {
+    console.log('xyyysssssd')
   }
 
   /**
@@ -86,6 +90,8 @@ export default class extends TinyEmitter {
   heading (level: 1 | 2 | 3 | 4 | 5 | 6) {
     const { start } = this.getSelection()
     const value = this.getValue()
+
+    console.log(value)
 
     // 查找离光标最近的换行符
     let brIndex = value.lastIndexOf('\n', start) + 1
@@ -114,7 +120,7 @@ export default class extends TinyEmitter {
    * @param {string} introOutro - 用于包裹的字符串
    * @param {string} tip - 默认文本
    */
-  protected wrap (introOutro: StringOrIntroOutro, tip: string) {
+  protected wrap (introOutro: StringOrIntroOutro, tip = '') {
     const { start, end } = this.getSelection()
     const val = this.getValue()
     let selectionStart
