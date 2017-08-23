@@ -41,6 +41,34 @@ export default class extends TinyEmitter {
   }
 
   /**
+   * 一些操作需要给选中的文本前后补充换行符，例如 codeBlock() 与 list()，
+   * 这个方法根据位置判断需要补充多少个换行符。
+   * @param {number} count
+   */
+  padNewline (count = 2) {
+    const { selectionStart, selectionEnd, value } = this.el
+    let start = 0
+    let end = 0
+
+    for (let i = 0; i < count; i++) {
+      const startChar = value[selectionStart - (i + 1)]
+      if (startChar !== '\n' && startChar !== undefined) {
+        start += 1
+      }
+
+      const endChar = value[selectionEnd + i]
+      if (endChar !== '\n' && endChar !== undefined) {
+        end += 1
+      }
+    }
+
+    return {
+      start,
+      end
+    }
+  }
+
+  /**
    * ol()、ul() 与 quote() 方法的底层方法
    */
   list (symbol: string | ((index: number) => string)) {
@@ -52,6 +80,8 @@ export default class extends TinyEmitter {
       symbolFunc = symbol
     }
 
+    const newlinePad = this.padNewline()
+
     const { selectionStart, selectionEnd, value } = this.el
     let newString = value.slice(selectionStart, selectionEnd)
 
@@ -61,15 +91,7 @@ export default class extends TinyEmitter {
       return match + symbolFunc(index)
     })
 
-    newString = '\n' + symbolFunc(0) + newString + '\n'
-
-    if (selectionStart !== 0 && value[selectionStart - 1] !== '\n') { // 否则如果前一个字符不是换行符，则加上
-      newString = '\n' + newString
-    }
-
-    if (value[selectionEnd] !== '\n') { // 如果末尾不是一个换行符，则加上
-      newString += '\n'
-    }
+    newString = repeat('\n', newlinePad.start) + symbolFunc(0) + newString + repeat('\n', newlinePad.end)
 
     this.el.value = insertString(value, selectionStart, newString, selectionEnd)
     return this
@@ -161,20 +183,30 @@ export default class extends TinyEmitter {
    * 块级代码。
    */
   blockCode () {
-    let intro
-    let outro = intro = '\n```\n'
+    const newlinePad = this.padNewline()
 
-    const { selectionStart, selectionEnd, value } = this.el
+    let intro = repeat('\n', newlinePad.start) + '```\n'
+    let outro = '\n```' + repeat('\n', newlinePad.end)
 
-    if (selectionStart === 0) { // 如果光标在第一个位置，则去掉前置换行符
-      intro = intro.slice(1)
-    } else if (value[selectionStart - 1] !== '\n') { // 否则如果前一个字符不是换行符，则加上
-      intro = '\n' + intro
-    }
-
-    if (value[selectionEnd] !== '\n') { // 如果末尾不是一个换行符，则加上
-      outro += '\n'
-    }
+    // const { selectionStart, selectionEnd, value } = this.el
+    //
+    // const firstChar = value[selectionStart - 1]
+    // if (firstChar !== '\n' && firstChar !== undefined) {
+    //   intro = '\n' + intro
+    // }
+    //
+    // const secondChar = value[selectionStart - 2]
+    // if (secondChar !== '\n' && secondChar !== undefined) {
+    //   intro = '\n' + intro
+    // }
+    //
+    // if (value[selectionEnd] !== '\n' && value[selectionEnd] !== undefined) { // 如果末尾不是一个换行符，则加上
+    //   outro += '\n'
+    // }
+    //
+    // if (value[selectionEnd + 1] !== '\n' && value[selectionEnd + 1] !== undefined) {
+    //   outro += '\n'
+    // }
 
     return this.wrap({
       intro,
