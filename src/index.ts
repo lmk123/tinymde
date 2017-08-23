@@ -41,7 +41,7 @@ export default class extends TinyEmitter {
   }
 
   /**
-   * 一些操作需要给选中的文本前后补充换行符，例如 codeBlock() 与 list()，
+   * 一些操作需要给选中的文本前后补充换行符，例如 codeBlock() 与 list()。
    * 这个方法根据位置判断需要补充多少个换行符。
    * @param {number} count
    */
@@ -159,6 +159,14 @@ export default class extends TinyEmitter {
   }
 
   /**
+   * 任务列表
+   * @return {any}
+   */
+  task () {
+    return this.list('- [ ] ')
+  }
+
+  /**
    * 粗体。
    */
   bold () {
@@ -185,32 +193,9 @@ export default class extends TinyEmitter {
   blockCode () {
     const newlinePad = this.padNewline()
 
-    let intro = repeat('\n', newlinePad.start) + '```\n'
-    let outro = '\n```' + repeat('\n', newlinePad.end)
-
-    // const { selectionStart, selectionEnd, value } = this.el
-    //
-    // const firstChar = value[selectionStart - 1]
-    // if (firstChar !== '\n' && firstChar !== undefined) {
-    //   intro = '\n' + intro
-    // }
-    //
-    // const secondChar = value[selectionStart - 2]
-    // if (secondChar !== '\n' && secondChar !== undefined) {
-    //   intro = '\n' + intro
-    // }
-    //
-    // if (value[selectionEnd] !== '\n' && value[selectionEnd] !== undefined) { // 如果末尾不是一个换行符，则加上
-    //   outro += '\n'
-    // }
-    //
-    // if (value[selectionEnd + 1] !== '\n' && value[selectionEnd + 1] !== undefined) {
-    //   outro += '\n'
-    // }
-
     return this.wrap({
-      intro,
-      outro
+      intro: repeat('\n', newlinePad.start) + '```\n',
+      outro: '\n```' + repeat('\n', newlinePad.end)
     })
   }
 
