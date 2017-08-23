@@ -24,6 +24,11 @@ export default class extends TinyEmitter {
     el.focus()
   }
 
+  /**
+   * 包裹用户选中文本的快捷方法。
+   * @param {StringOrIntroOutro} introOutro
+   * @param {boolean} autoSelect
+   */
   wrap (introOutro: StringOrIntroOutro, autoSelect = true) {
     const { intro, outro } = getInOut(introOutro)
     const { selectionStart, selectionEnd, value } = this.el
@@ -40,7 +45,7 @@ export default class extends TinyEmitter {
    * @param {string} url
    * @param {boolean} isLink
    */
-  linkOrImage (url?: string, isLink?: boolean) {
+  private linkOrImage (url?: string, isLink?: boolean) {
     let hasUrl = true
     let intro = (isLink ? '' : '!') + '['
     if (!url) {
