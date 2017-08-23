@@ -84,11 +84,12 @@ export default class extends TinyEmitter {
   }
 
   /**
-   * 链接。
+   * link() 与 image() 的操作基本一样，所以提取出来了一个内部的公用方法
+   * @param {boolean} isLink
    * @param {string} url
    * @param {string} text
    */
-  link (url?: string, text?: string) {
+  private linkOrImage (isLink: boolean, url?: string, text?: string) {
     const value = this.getValue()
     let hasText = false
     let hasURL = false
@@ -103,20 +104,21 @@ export default class extends TinyEmitter {
     }
 
     if (!url) {
-      url = 'url'
+      url = isLink ? 'url' : 'image url'
     } else {
       hasURL = true
     }
 
-    const insertStr = `[${text}](${url})`
+    const insertStr = `${!isLink ? '!' : ''}[${text}](${url})`
+    const preLength = isLink ? 1 : 2
     this.setValue(insertString(value, start, insertStr, end))
 
     // 如果没有文本，则将光标放在中括号内
     if (!hasText) {
-      this.setSelection(start + 1)
+      this.setSelection(start + preLength)
     } else if (!hasURL) { // 有文本但没 URL，则将 url 部分的文本选中
       // 原本的开始位置 + `[` + text 的长度 + `](`
-      const startIndex = start + 1 + text.length + 2
+      const startIndex = start + preLength + text.length + 2
       // 在开始位置的基础上 + url 的长度
       const endIndex = startIndex + url.length
       this.setSelection(startIndex, endIndex)
@@ -125,6 +127,24 @@ export default class extends TinyEmitter {
     }
 
     return this
+  }
+
+  /**
+   * 链接。
+   * @param {string} url
+   * @param {string} text
+   */
+  link (url?: string, text?: string) {
+    return this.linkOrImage(true, url, text)
+  }
+
+  /**
+   * 插入一张图片
+   * @param url
+   * @param text
+   */
+  image (url?: string, text?: string) {
+    return this.linkOrImage(false, url, text)
   }
 
   /**

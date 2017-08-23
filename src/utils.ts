@@ -35,9 +35,7 @@ export function getInOut (inOut: StringOrIntroOutro): IntroOutro {
  */
 export function wrapBy (str: string, start: number, end: number, wrapStr: StringOrIntroOutro) {
   const { intro, outro } = getInOut(wrapStr)
-
-  const result = insertString(str, start, intro)
-  return insertString(result, end + outro.length, outro)
+  return insertString(str, start, intro + str.slice(start, end) + outro, end)
 }
 
 /**
