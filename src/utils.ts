@@ -27,18 +27,6 @@ export function getInOut (inOut: StringOrIntroOutro): IntroOutro {
 }
 
 /**
- * 将一段字符串用指定的符号包裹
- * @param str - 要处理的字符串
- * @param start - 要包裹的字符串的开始位置
- * @param end - 要包裹的字符串的结束位置
- * @param wrapStr - 用于包裹的字符串
- */
-export function wrapBy (str: string, start: number, end: number, wrapStr: StringOrIntroOutro) {
-  const { intro, outro } = getInOut(wrapStr)
-  return insertString(str, start, intro + str.slice(start, end) + outro, end)
-}
-
-/**
  * 重复字符串
  * @type {(str, count) => string}
  */

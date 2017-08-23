@@ -1,10 +1,9 @@
 import TinyEmitter from 'tiny-emitter'
 
-import { getInOut, insertString, StringOrIntroOutro, wrapBy, repeat } from './utils'
+import { getInOut, insertString, StringOrIntroOutro, repeat } from './utils'
 
 export default class extends TinyEmitter {
   el: HTMLTextAreaElement
-  private scrollTop: number
 
   constructor (el: string | HTMLTextAreaElement) {
     super()
@@ -17,21 +16,6 @@ export default class extends TinyEmitter {
   }
 
   /**
-   * 获取当前编辑器的内容
-   */
-  getValue () {
-    return this.el.value
-  }
-
-  /**
-   * 设置当前编辑器的内容
-   * @param {string} val
-   */
-  setValue (val: string) {
-    this.el.value = val
-  }
-
-  /**
    * 设置当前的选中范围
    */
   setSelection (start: number, end?: number) {
@@ -40,111 +24,117 @@ export default class extends TinyEmitter {
     el.focus()
   }
 
-  /**
-   * 获取编辑器当前选中区域的范围。如果没有选中文本，则 start 和 end 是相等的。
-   */
-  getSelection () {
-    const { selectionStart, selectionEnd } = this.el
-
-    return {
-      start: selectionStart,
-      end: selectionEnd,
-      collapsed: selectionStart === selectionEnd
+  wrap (introOutro: StringOrIntroOutro, autoSelect = true) {
+    const { intro, outro } = getInOut(introOutro)
+    const { selectionStart, selectionEnd, value } = this.el
+    this.el.value = insertString(value, selectionStart, intro + value.slice(selectionStart, selectionEnd) + outro, selectionEnd)
+    if (autoSelect) {
+      const selectionOffset = intro.length
+      this.setSelection(selectionStart + selectionOffset, selectionEnd + selectionOffset)
     }
-  }
-
-  /**
-   * 粗体。
-   * @param {string} tip
-   */
-  bold (tip?: string) {
-    this.wrap('**', tip)
-    return this
-  }
-
-  /**
-   * 斜体。
-   * @param {string} tip
-   */
-  italic (tip?: string) {
-    this.wrap('_', tip)
-    return this
-  }
-
-  /**
-   * 块级代码。
-   * @param {string} tip
-   */
-  codeBlock (tip?: string) {
-    this.wrap({
-      intro: '```\n',
-      outro: '\n```'
-    }, tip)
     return this
   }
 
   /**
    * link() 与 image() 的操作基本一样，所以提取出来了一个内部的公用方法
-   * @param {boolean} isLink
    * @param {string} url
-   * @param {string} text
+   * @param {boolean} isLink
    */
-  private linkOrImage (isLink: boolean, url?: string, text?: string) {
-    const value = this.getValue()
-    let hasText = false
-    let hasURL = false
-    const { start, end } = this.getSelection()
-
-    if (!text) {
-      text = value.slice(start, end)
-    }
-
-    if (text) {
-      hasText = true
-    }
-
+  linkOrImage (url?: string, isLink?: boolean) {
+    let hasUrl = true
+    let intro = (isLink ? '' : '!') + '['
     if (!url) {
-      url = isLink ? 'url' : 'image url'
-    } else {
-      hasURL = true
+      hasUrl = false
+      url = isLink ? 'link' : 'image url'
     }
 
-    const insertStr = `${!isLink ? '!' : ''}[${text}](${url})`
-    const preLength = isLink ? 1 : 2
-    this.setValue(insertString(value, start, insertStr, end))
+    const outroIn = ']('
+    const outroOut = ')'
+    const outro = outroIn + url + outroOut
 
-    // 如果没有文本，则将光标放在中括号内
-    if (!hasText) {
-      this.setSelection(start + preLength)
-    } else if (!hasURL) { // 有文本但没 URL，则将 url 部分的文本选中
-      // 原本的开始位置 + `[` + text 的长度 + `](`
-      const startIndex = start + preLength + text.length + 2
-      // 在开始位置的基础上 + url 的长度
-      const endIndex = startIndex + url.length
-      this.setSelection(startIndex, endIndex)
-    } else { // 既有文本也有 URL，则将光标放在最后
-      this.setSelection(start + insertStr.length)
+    const { selectionStart, selectionEnd, value } = this.el
+    const collapsed = selectionStart === selectionEnd
+    this.wrap({
+      intro,
+      outro
+    }, collapsed) // 如果用户调用方法前没有选中文本，则由 wrap 方法自动将光标置于中括号内
+
+    // 如果用户调用方法前有选中的文本
+    if (!collapsed) {
+      const { length } = value.slice(selectionStart, selectionEnd)
+
+      // 如果显式的传入了 url 参数，则将光标置于末尾
+      if (hasUrl) {
+        this.setSelection(selectionEnd + intro.length + outro.length)
+      } else { // 否则选中 url 部分
+        const start = selectionStart + intro.length + length + outroIn.length
+        this.setSelection(start, start + url.length)
+      }
     }
 
     return this
   }
 
   /**
+   * 粗体。
+   */
+  bold () {
+    return this.wrap('**')
+  }
+
+  /**
+   * 斜体。
+   */
+  italic () {
+    return this.wrap('_')
+  }
+
+  /**
+   * 内联代码。
+   */
+  inlineCode () {
+    return this.wrap('`')
+  }
+
+  /**
+   * 块级代码。
+   */
+  blockCode () {
+    let intro
+    let outro = intro = '\n```\n'
+
+    const { selectionStart, selectionEnd, value } = this.el
+
+    if (selectionStart === 0) { // 如果光标在第一个位置，则去掉前置换行符
+      intro = intro.slice(1)
+    } else if (value[selectionStart - 1] !== '\n') { // 否则如果前一个字符不是换行符，则加上
+      intro = '\n' + intro
+    }
+
+    if (value[selectionEnd] !== '\n') { // 如果末尾不是一个换行符，则加上
+      outro += '\n'
+    }
+
+    return this.wrap({
+      intro,
+      outro
+    })
+  }
+
+  /**
    * 链接。
    * @param {string} url
-   * @param {string} text
    */
-  link (url?: string, text?: string) {
-    return this.linkOrImage(true, url, text)
+  link (url?: string) {
+    return this.linkOrImage(url, true)
   }
 
   /**
    * 插入一张图片
    * @param url
-   * @param text
    */
-  image (url?: string, text?: string) {
-    return this.linkOrImage(false, url, text)
+  image (url?: string) {
+    return this.linkOrImage(url)
   }
 
   /**
@@ -152,62 +142,19 @@ export default class extends TinyEmitter {
    * @param {number} level
    */
   heading (level: 1 | 2 | 3 | 4 | 5 | 6) {
-    const { start, end } = this.getSelection()
-    const value = this.getValue()
+    const { selectionStart, selectionEnd, value } = this.el
 
     // 查找离光标最近的换行符
-    let brIndex = value.lastIndexOf('\n', start) + 1
+    const br = '\n'
+    let brIndex = value.lastIndexOf(br, selectionStart) + br.length
 
     // 插入 # 号
-    const sinept = repeat('#', level) + ' '
-    this.setValue(insertString(value, brIndex, sinept))
+    const fragment = repeat('#', level) + ' '
+    this.el.value = insertString(value, brIndex, fragment)
 
     // 还原光标的位置
-    this.setSelection(start + sinept.length, end + sinept.length)
+    this.setSelection(selectionStart + fragment.length, selectionEnd + fragment.length)
 
-    return this
-  }
-
-  /**
-   * 保存滚动条位置
-   */
-  protected saveScroll () {
-    this.scrollTop = this.el.scrollTop
-  }
-
-  /**
-   * 恢复滚动条位置
-   */
-  protected restoreScroll () {
-    this.el.scrollTop = this.scrollTop
-  }
-
-  /**
-   * 将文本框中被选中的文本用指定字符串包裹起来。
-   * 如果文本框中没有选中文本，则在光标的位置插入一段被包裹起来的提示文本。
-   * @param {string} introOutro - 用于包裹的字符串
-   * @param {string} tip - 默认文本
-   */
-  protected wrap (introOutro: StringOrIntroOutro, tip = '') {
-    const { start, end, collapsed } = this.getSelection()
-    const val = this.getValue()
-    let selectionStart
-    let selectionEnd
-
-    let { intro, outro } = getInOut(introOutro)
-
-    this.saveScroll()
-    if (collapsed) {
-      this.setValue(insertString(val, end, `${intro}${tip}${outro}`))
-      selectionStart = end + intro.length
-      selectionEnd = selectionStart + tip.length
-    } else {
-      this.setValue(wrapBy(val, start, end, introOutro))
-      selectionStart = start + intro.length
-      selectionEnd = end + outro.length
-    }
-    this.setSelection(selectionStart, selectionEnd)
-    this.restoreScroll()
     return this
   }
 }
