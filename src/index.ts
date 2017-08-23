@@ -41,6 +41,41 @@ export default class extends TinyEmitter {
   }
 
   /**
+   * ol()、ul() 与 quote() 方法的底层方法
+   */
+  list (symbol: string | ((index: number) => string)) {
+    let symbolFunc: (index: number) => string
+
+    if (typeof symbol === 'string') {
+      symbolFunc = () => symbol
+    } else {
+      symbolFunc = symbol
+    }
+
+    const { selectionStart, selectionEnd, value } = this.el
+    let newString = value.slice(selectionStart, selectionEnd)
+
+    let index = 0
+    newString = newString.replace(/\n{2,}/g, match => {
+      index += 1
+      return match + symbolFunc(index)
+    })
+
+    newString = '\n' + symbolFunc(0) + newString + '\n'
+
+    if (selectionStart !== 0 && value[selectionStart - 1] !== '\n') { // 否则如果前一个字符不是换行符，则加上
+      newString = '\n' + newString
+    }
+
+    if (value[selectionEnd] !== '\n') { // 如果末尾不是一个换行符，则加上
+      newString += '\n'
+    }
+
+    this.el.value = insertString(value, selectionStart, newString, selectionEnd)
+    return this
+  }
+
+  /**
    * link() 与 image() 的操作基本一样，所以提取出来了一个内部的公用方法
    * @param {string} url
    * @param {boolean} isLink
@@ -78,6 +113,27 @@ export default class extends TinyEmitter {
     }
 
     return this
+  }
+
+  /**
+   * 无序列表
+   */
+  ul () {
+    return this.list('- ')
+  }
+
+  /**
+   * 有序列表
+   */
+  ol () {
+    return this.list(index => `${index + 1}. `)
+  }
+
+  /**
+   * 引用
+   */
+  quote () {
+    return this.list('> ')
   }
 
   /**
