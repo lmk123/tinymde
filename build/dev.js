@@ -1,5 +1,7 @@
 const cjs = require('rollup-plugin-commonjs')
 const nodeResolve = require('rollup-plugin-node-resolve')
+const livereload = require('rollup-plugin-livereload')
+const serve = require('rollup-plugin-serve')
 const config = require('./config')
 
 module.exports = {
@@ -7,7 +9,12 @@ module.exports = {
   plugins: [
     cjs(),
     nodeResolve(),
-    config.tp
+    config.tp,
+    serve({
+      open: true,
+      contentBase: ''
+    }),
+    livereload()
   ],
   output: {
     file: config.umdOutputPath,
