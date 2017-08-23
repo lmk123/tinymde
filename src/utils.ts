@@ -1,12 +1,15 @@
 /**
  * 在字符串中插入一段字符串
  * @param str - 原本的字符串
- * @param index - 要插入字符串的位置
+ * @param start - 要插入字符串的位置
  * @param insert - 要插入的字符串
+ * @param end - 如果有 end 参数，则会替换掉 start 至 end 范围内的这段字符串
  */
-export function insertString (str: string, index: number, insert: string) {
-  const startString = str.slice(0, index)
-  const endString = str.slice(index)
+export function insertString (str: string, start: number, insert: string, end?: number) {
+  if (!end) end = start
+
+  const startString = str.slice(0, start)
+  const endString = str.slice(start + (end - start))
   return startString + insert + endString
 }
 

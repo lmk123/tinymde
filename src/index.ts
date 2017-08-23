@@ -34,10 +34,10 @@ export default class extends TinyEmitter {
   /**
    * 设置当前的选中范围
    */
-  setSelection (start: number, end: number) {
+  setSelection (start: number, end?: number) {
     const { el } = this
+    el.setSelectionRange(start, end == null ? start : end)
     el.focus()
-    el.setSelectionRange(start, end)
   }
 
   /**
@@ -48,7 +48,8 @@ export default class extends TinyEmitter {
 
     return {
       start: selectionStart,
-      end: selectionEnd
+      end: selectionEnd,
+      collapsed: selectionStart === selectionEnd
     }
   }
 
@@ -58,6 +59,7 @@ export default class extends TinyEmitter {
    */
   bold (tip?: string) {
     this.wrap('**', tip)
+    return this
   }
 
   /**
@@ -66,6 +68,7 @@ export default class extends TinyEmitter {
    */
   italic (tip?: string) {
     this.wrap('_', tip)
+    return this
   }
 
   /**
@@ -77,10 +80,51 @@ export default class extends TinyEmitter {
       intro: '```\n',
       outro: '\n```'
     }, tip)
+    return this
   }
 
-  test () {
-    console.log('xyyysssssd')
+  /**
+   * 链接。
+   * @param {string} url
+   * @param {string} text
+   */
+  link (url?: string, text?: string) {
+    const value = this.getValue()
+    let hasText = false
+    let hasURL = false
+    const { start, end } = this.getSelection()
+
+    if (!text) {
+      text = value.slice(start, end)
+    }
+
+    if (text) {
+      hasText = true
+    }
+
+    if (!url) {
+      url = 'url'
+    } else {
+      hasURL = true
+    }
+
+    const insertStr = `[${text}](${url})`
+    this.setValue(insertString(value, start, insertStr, end))
+
+    // 如果没有文本，则将光标放在中括号内
+    if (!hasText) {
+      this.setSelection(start + 1)
+    } else if (!hasURL) { // 有文本但没 URL，则将 url 部分的文本选中
+      // 原本的开始位置 + `[` + text 的长度 + `](`
+      const startIndex = start + 1 + text.length + 2
+      // 在开始位置的基础上 + url 的长度
+      const endIndex = startIndex + url.length
+      this.setSelection(startIndex, endIndex)
+    } else { // 既有文本也有 URL，则将光标放在最后
+      this.setSelection(start + insertStr.length)
+    }
+
+    return this
   }
 
   /**
@@ -88,16 +132,20 @@ export default class extends TinyEmitter {
    * @param {number} level
    */
   heading (level: 1 | 2 | 3 | 4 | 5 | 6) {
-    const { start } = this.getSelection()
+    const { start, end } = this.getSelection()
     const value = this.getValue()
-
-    console.log(value)
 
     // 查找离光标最近的换行符
     let brIndex = value.lastIndexOf('\n', start) + 1
 
     // 插入 # 号
-    this.setValue(insertString(value, brIndex, repeat('#', level) + ' '))
+    const sinept = repeat('#', level) + ' '
+    this.setValue(insertString(value, brIndex, sinept))
+
+    // 还原光标的位置
+    this.setSelection(start + sinept.length, end + sinept.length)
+
+    return this
   }
 
   /**
@@ -121,7 +169,7 @@ export default class extends TinyEmitter {
    * @param {string} tip - 默认文本
    */
   protected wrap (introOutro: StringOrIntroOutro, tip = '') {
-    const { start, end } = this.getSelection()
+    const { start, end, collapsed } = this.getSelection()
     const val = this.getValue()
     let selectionStart
     let selectionEnd
@@ -129,7 +177,7 @@ export default class extends TinyEmitter {
     let { intro, outro } = getInOut(introOutro)
 
     this.saveScroll()
-    if (start === end) {
+    if (collapsed) {
       this.setValue(insertString(val, end, `${intro}${tip}${outro}`))
       selectionStart = end + intro.length
       selectionEnd = selectionStart + tip.length
@@ -140,5 +188,6 @@ export default class extends TinyEmitter {
     }
     this.setSelection(selectionStart, selectionEnd)
     this.restoreScroll()
+    return this
   }
 }
