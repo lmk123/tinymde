@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "dev": "rollup -c -w",
+    "dev": "rollup -c build/dev.js -w",
     "lint": "tslint --type-check --project tsconfig.json 'src/**/*.ts'",
     "build": "node build/build.js"
   },
@@ -20,7 +20,7 @@
     "fs-extra": "^4.0.1",
     "rollup": "^0.48.2",
     "rollup-plugin-buble": "^0.15.0",
-    "rollup-plugin-commonjs": "^8.1.0",
+    "rollup-plugin-commonjs": "^8.2.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-typescript2": "^0.5.0",
     "rollup-watch": "^4.3.1",
