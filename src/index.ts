@@ -70,8 +70,6 @@ export default class extends TinyEmitter {
     // 更新当前状态索引
     this.hid += 1
 
-    console.log('save state')
-
     return this
   }
 
