@@ -1,6 +1,15 @@
 import TinyEmitter from 'tiny-emitter'
 
-import { getInOut, insertString, StringOrIntroOutro, repeat, debounce, addEvent, AnyFunc } from './utils'
+import {
+  StringOrIntroOutro,
+  AnyFunc,
+
+  getInOut,
+  insertString,
+  repeat,
+  debounce,
+  addEvent
+} from './utils'
 
 interface State {
   selectionStart: number
@@ -8,15 +17,23 @@ interface State {
   value: string
 }
 
+export interface Options {
+  maxRecords?: number
+
+  [otherProps: string]: any // 允许用户传入自定义参数
+}
+
 export default class extends TinyEmitter {
   el: HTMLTextAreaElement
   private history: State[]
   private hid: number
   private unbinds: AnyFunc[]
+  private maxRecords: number
 
-  constructor (el: string | HTMLTextAreaElement) {
+  constructor (el: string | HTMLTextAreaElement, options?: Options) {
     super()
 
+    this.maxRecords = options && options.maxRecords || 100
     this.history = []
     this.hid = -1
 
@@ -40,6 +57,9 @@ export default class extends TinyEmitter {
     this.saveState()
   }
 
+  /**
+   * 摧毁实例。目前其实就解绑了一些事件。
+   */
   destroy () {
     this.unbinds.forEach(unbind => unbind())
   }
@@ -67,8 +87,12 @@ export default class extends TinyEmitter {
       value
     })
 
-    // 更新当前状态索引
-    this.hid += 1
+    // 如果更新后记录超出最大记录数则删除最前面的记录
+    if (history.length > this.maxRecords) {
+      history.shift()
+    } else { // 否则更新当前索引
+      this.hid += 1
+    }
 
     return this
   }
