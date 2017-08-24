@@ -1,3 +1,7 @@
+// TODO 给每个操作添加「反操作」
+// TODO 「撤销」与「反撤销」方法
+// TODO list 方法需要补上选中操作
+
 import TinyEmitter from 'tiny-emitter'
 
 import { getInOut, insertString, StringOrIntroOutro, repeat } from './utils'
@@ -69,15 +73,17 @@ export default class extends TinyEmitter {
   }
 
   /**
-   * ol()、ul() 与 quote() 方法的底层方法
+   * ol()、ul() 与 quote() 方法的底层方法。
+   * @param {string} pattern - 每一行前面要添加的前缀，可以包含 `{i}` 会被替换成 index
+   * @param {number} brCount - 满足多少个换行符时才添加前缀。一般需要两个，但 quote() 方法只需要一个。
    */
-  list (symbol: string | ((index: number) => string)) {
+  list (pattern: string, brCount = 2) {
     let symbolFunc: (index: number) => string
 
-    if (typeof symbol === 'string') {
-      symbolFunc = () => symbol
+    if (pattern.indexOf('{i}') >= 0) {
+      symbolFunc = index => pattern.replace('{i}', String(index + 1))
     } else {
-      symbolFunc = symbol
+      symbolFunc = () => pattern
     }
 
     const newlinePad = this.padNewline()
@@ -86,7 +92,8 @@ export default class extends TinyEmitter {
     let newString = value.slice(selectionStart, selectionEnd)
 
     let index = 0
-    newString = newString.replace(/\n{2,}/g, match => {
+    const brReg = new RegExp('\n{' + brCount + '}', 'g')
+    newString = newString.replace(brReg, match => {
       index += 1
       return match + symbolFunc(index)
     })
@@ -148,19 +155,18 @@ export default class extends TinyEmitter {
    * 有序列表
    */
   ol () {
-    return this.list(index => `${index + 1}. `)
+    return this.list('{i}. ')
   }
 
   /**
-   * 引用
+   * 引用。
    */
   quote () {
-    return this.list('> ')
+    return this.list('> ', 1)
   }
 
   /**
-   * 任务列表
-   * @return {any}
+   * 任务列表。
    */
   task () {
     return this.list('- [ ] ')
