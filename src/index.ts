@@ -1,18 +1,47 @@
 import TinyEmitter from 'tiny-emitter'
 
-import { getInOut, insertString, StringOrIntroOutro, repeat } from './utils'
+import { getInOut, insertString, StringOrIntroOutro, repeat, debounce, addEvent, AnyFunc } from './utils'
+
+interface State {
+  selectionStart: number
+  selectionEnd: number
+  value: string
+}
 
 export default class extends TinyEmitter {
   el: HTMLTextAreaElement
+  private history: State[]
+  private hid: number
+  private unbinds: AnyFunc[]
 
   constructor (el: string | HTMLTextAreaElement) {
     super()
+
+    this.history = []
+    this.hid = -1
 
     if (typeof el === 'string') {
       el = (document.querySelector(el) as HTMLTextAreaElement)
     }
 
-    this.el = el || document.createElement('textarea')
+    this.unbinds = [
+      addEvent(el, 'mouseup', () => {
+        if ((el as HTMLTextAreaElement).selectionStart !== (el as HTMLTextAreaElement).selectionEnd) {
+          this.saveState()
+        }
+      }),
+      addEvent(el, 'input', debounce(() => {
+        this.saveState()
+      }))
+    ]
+
+    this.el = el
+
+    this.saveState()
+  }
+
+  destroy () {
+    this.unbinds.forEach(unbind => unbind())
   }
 
   /**
@@ -25,14 +54,54 @@ export default class extends TinyEmitter {
   }
 
   /**
-   * TODO 撤销
+   * 保存编辑器当前的状态。
    */
-  undo () {}
+  saveState () {
+    const { selectionStart, selectionEnd, value } = this.el
+    const { history, hid } = this
+
+    // 删除后面的状态并添加新状态
+    history.splice(hid + 1, history.length - hid, {
+      selectionStart,
+      selectionEnd,
+      value
+    })
+
+    // 更新当前状态索引
+    this.hid += 1
+
+    console.log('save state')
+
+    return this
+  }
 
   /**
-   * TODO 重做
+   * 回到编辑器的指定位置的状态。
+   * @param {number} index
    */
-  redo() {}
+  restoreState (index: number) {
+    const state = this.history[index]
+    if (state) {
+      this.hid = index
+      this.el.value = state.value
+      this.setSelection(state.selectionStart, state.selectionEnd)
+    }
+    return this
+  }
+
+  /**
+   * 撤销，即回到上一个状态。
+   */
+  undo () {
+    return this.restoreState(this.hid - 1)
+  }
+
+  /**
+   * 重做，即前进到下一个状态。
+   */
+  redo () {
+    return this.restoreState(this.hid + 1)
+  }
 
   /**
    * 包裹用户选中文本的快捷方法。
@@ -46,6 +115,7 @@ export default class extends TinyEmitter {
     if (autoSelect) {
       const selectionOffset = intro.length
       this.setSelection(selectionStart + selectionOffset, selectionEnd + selectionOffset)
+      this.saveState()
     }
     return this
   }
@@ -118,6 +188,7 @@ export default class extends TinyEmitter {
     this.el.value = insertString(value, selectionStart, newString, selectionEnd)
     // 如果只有一个段落，则选中的时候不要包含前缀，所以 start 在 index 等于 0 时加上了第一个前缀的长度
     this.setSelection(selectionStart + startOffset + (index === 0 ? firstSymbol.length : 0), selectionEnd + endOffset)
+    this.saveState()
     return this
   }
 
@@ -156,6 +227,8 @@ export default class extends TinyEmitter {
         const start = selectionStart + intro.length + length + outroIn.length
         this.setSelection(start, start + url.length)
       }
+
+      this.saveState()
     }
 
     return this
@@ -263,6 +336,7 @@ export default class extends TinyEmitter {
     // 还原光标的位置
     this.setSelection(selectionStart + fragment.length, selectionEnd + fragment.length)
 
+    this.saveState()
     return this
   }
 }

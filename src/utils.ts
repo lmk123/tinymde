@@ -41,3 +41,35 @@ export const repeat: (str: string, count: number) => string = String.prototype.r
       }
       return s
     }
+
+export type AnyFunc = (...a: any[]) => any
+
+/**
+ * 注册事件的便捷方法。
+ * @param {EventTarget} el
+ * @param {string} name
+ * @param {(event: Event) => any} handler
+ * @return {() => void}
+ */
+export function addEvent (el: EventTarget, name: string, handler: (event: Event) => any) {
+  el.addEventListener(name, handler)
+  return function () {
+    el.removeEventListener(name, handler)
+  }
+}
+
+/**
+ * 简单的 debounce 方法
+ * @param {function} func
+ * @param {number} timeout
+ * @return {function}
+ */
+export function debounce (func: AnyFunc, timeout = 250) {
+  let timeId: NodeJS.Timer
+  return function (this: any, ...args: any[]) {
+    clearTimeout(timeId)
+    timeId = setTimeout(() => {
+      func.apply(this, args)
+    }, timeout)
+  }
+}
