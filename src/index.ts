@@ -1,7 +1,3 @@
-// TODO 给每个操作添加「反操作」
-// TODO 「撤销」与「反撤销」方法
-// TODO list 方法需要补上选中操作
-
 import TinyEmitter from 'tiny-emitter'
 
 import { getInOut, insertString, StringOrIntroOutro, repeat } from './utils'
@@ -27,6 +23,16 @@ export default class extends TinyEmitter {
     el.setSelectionRange(start, end == null ? start : end)
     el.focus()
   }
+
+  /**
+   * TODO 撤销
+   */
+  undo () {}
+
+  /**
+   * TODO 重做
+   */
+  redo() {}
 
   /**
    * 包裹用户选中文本的快捷方法。
@@ -73,7 +79,7 @@ export default class extends TinyEmitter {
   }
 
   /**
-   * ol()、ul() 与 quote() 方法的底层方法。
+   * ol()、ul()、task() 与 quote() 的底层方法。
    * @param {string} pattern - 每一行前面要添加的前缀，可以包含 `{i}` 会被替换成 index
    * @param {number} brCount - 满足多少个换行符时才添加前缀。一般需要两个，但 quote() 方法只需要一个。
    */
@@ -90,17 +96,28 @@ export default class extends TinyEmitter {
 
     const { selectionStart, selectionEnd, value } = this.el
     let newString = value.slice(selectionStart, selectionEnd)
+    let startOffset = 0
+    let endOffset = 0
 
     let index = 0
     const brReg = new RegExp('\n{' + brCount + '}', 'g')
     newString = newString.replace(brReg, match => {
       index += 1
-      return match + symbolFunc(index)
+      const symbol = symbolFunc(index)
+      endOffset += symbol.length
+      return match + symbol
     })
 
-    newString = repeat('\n', newlinePad.start) + symbolFunc(0) + newString + repeat('\n', newlinePad.end)
+    const intro = repeat('\n', newlinePad.start)
+    const firstSymbol = symbolFunc(0)
+    const outro = repeat('\n', newlinePad.end)
+    startOffset += intro.length
+    endOffset += outro.length + firstSymbol.length
+    newString = intro + firstSymbol + newString + outro
 
     this.el.value = insertString(value, selectionStart, newString, selectionEnd)
+    // 如果只有一个段落，则选中的时候不要包含前缀，所以 start 在 index 等于 0 时加上了第一个前缀的长度
+    this.setSelection(selectionStart + startOffset + (index === 0 ? firstSymbol.length : 0), selectionEnd + endOffset)
     return this
   }
 
@@ -184,6 +201,13 @@ export default class extends TinyEmitter {
    */
   italic () {
     return this.wrap('_')
+  }
+
+  /**
+   * 删除线。
+   */
+  strikethrough () {
+    return this.wrap('~~')
   }
 
   /**
