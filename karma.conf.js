@@ -77,8 +77,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: false,
-    singleRun: true,
-    concurrency: Infinity
+    singleRun: true
   }
 
   if(process.env.TRAVIS) {
@@ -96,6 +95,7 @@ module.exports = function (config) {
     options.browsers = Object.keys(customLaunchers)
     options.singleRun = true
     options.autoWatch = false
+    options.concurrency = 3 // 同一时刻只启动这么多的浏览器，否则同时开启所有浏览器会超时
   } else {
     options.browsers = ['Chrome']
   }
