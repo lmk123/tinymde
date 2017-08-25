@@ -65,10 +65,10 @@ export function addEvent (el: EventTarget, name: string, handler: (event: Event)
  * @return {function}
  */
 export function debounce (func: AnyFunc, timeout = 250) {
-  let timeId: NodeJS.Timer
+  let timeId: number
   return function (this: any, ...args: any[]) {
-    clearTimeout(timeId)
-    timeId = setTimeout(() => {
+    window.clearTimeout(timeId)
+    timeId = window.setTimeout(() => {
       func.apply(this, args)
     }, timeout)
   }
