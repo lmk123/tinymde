@@ -10,8 +10,9 @@ module.exports = function (config) {
       '**/*.ts': ['karma-typescript']
     },
     reporters: ['progress', 'karma-typescript'],
+    // karma-coveralls 必须要有 karma-coverage 的配置才能找到 lcov 文件
     coverageReporter: {
-      type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
+      type: 'lcov',
       dir: 'coverage/'
     },
     karmaTypescriptConfig: {
@@ -19,7 +20,7 @@ module.exports = function (config) {
         html: 'coverage',
         lcovonly: {
           dir: 'coverage',
-          subdirectory: 'lcov'
+          subdirectory: 'lcov' // 让生成的 lcov 文件位置匹配 karma-coverage 的配置
         }
       },
       compilerOptions: {
@@ -38,6 +39,9 @@ module.exports = function (config) {
     options.reporters.push('coverage', 'coveralls', 'dots')
   } else {
     options.browsers.push('Chrome', 'Safari')
+    // Safari 有点慢
+    options.captureTimeout = 120000
+    options.browserNoActivityTimeout = 20000
   }
 
   config.set(options)
