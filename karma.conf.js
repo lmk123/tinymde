@@ -84,7 +84,7 @@ module.exports = function (config) {
   }
 
   if(process.env.TRAVIS) {
-    options.reporters = options.reporters.concat(['coveralls', 'dots', 'saucelabs'])
+    options.reporters = options.reporters.concat(['coverage', 'coveralls', 'dots', 'saucelabs'])
     options.sauceLabs = {
       startConnect: false,
       tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
