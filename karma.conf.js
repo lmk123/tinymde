@@ -1,58 +1,4 @@
 module.exports = function (config) {
-  // https://github.com/vuejs/vue/blob/dev/test/unit/karma.sauce.config.js#L22
-  const customLaunchers = {
-    // the cool kids
-    sl_chrome: {
-      base: 'SauceLabs',
-      browserName: 'chrome',
-      platform: 'Windows 7'
-    },
-    sl_firefox: {
-      base: 'SauceLabs',
-      browserName: 'firefox'
-    },
-    sl_mac_safari: {
-      base: 'SauceLabs',
-      browserName: 'safari',
-      platform: 'OS X 10.10'
-    },
-    // ie family
-    sl_ie_9: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      platform: 'Windows 7',
-      version: '9'
-    },
-    sl_ie_10: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      platform: 'Windows 8',
-      version: '10'
-    },
-    sl_ie_11: {
-      base: 'SauceLabs',
-      browserName: 'internet explorer',
-      platform: 'Windows 8.1',
-      version: '11'
-    },
-    sl_edge: {
-      base: 'SauceLabs',
-      browserName: 'MicrosoftEdge',
-      platform: 'Windows 10'
-    },
-    // mobile
-    sl_ios_safari_9: {
-      base: 'SauceLabs',
-      browserName: 'iphone',
-      version: '10.3'
-    },
-    sl_android_6_0: {
-      base: 'SauceLabs',
-      browserName: 'android',
-      version: '6.0'
-    }
-  }
-
   const options = {
     basePath: '',
     frameworks: ['jasmine', 'karma-typescript'],
@@ -73,6 +19,7 @@ module.exports = function (config) {
         lib: ['dom', 'es2015']
       }
     },
+    browsers: ['PhantomJS'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -81,23 +28,9 @@ module.exports = function (config) {
   }
 
   if(process.env.TRAVIS) {
-    options.reporters = options.reporters.concat(['coverage', 'coveralls', 'dots', 'saucelabs'])
-    options.sauceLabs = {
-      recordScreenshots: false,
-      startConnect: false,
-      tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
-      testName: 'TinyMDE Unit Tests'
-    }
-    // mobile emulators are really slow
-    options.captureTimeout = 300000
-    options.browserNoActivityTimeout = 300000
-    options.customLaunchers = customLaunchers
-    options.browsers = Object.keys(customLaunchers)
-    options.singleRun = true
-    options.autoWatch = false
-    options.concurrency = 3 // 同一时刻只启动这么多的浏览器，否则同时开启所有浏览器会超时
+    options.reporters.push('coverage', 'coveralls', 'dots')
   } else {
-    options.browsers = ['Chrome']
+    options.browsers.push('Chrome', 'Safari')
   }
 
   config.set(options)

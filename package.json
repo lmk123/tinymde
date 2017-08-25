@@ -2,6 +2,10 @@
   "name": "tinymde",
   "version": "0.1.0",
   "description": "Tiny Markdown editor.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lmk123/tinymde.git"
+  },
   "main": "dist/tinymde.common.js",
   "module": "dist/tinymde.esm.js",
   "unpkg": "dist/tinymde.js",
@@ -25,7 +29,8 @@
     "karma-coverage": "^1.1.1",
     "karma-coveralls": "^1.1.2",
     "karma-jasmine": "^1.1.0",
-    "karma-sauce-launcher": "^1.2.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-safari-launcher": "^1.0.0",
     "karma-typescript": "^3.0.5",
     "rollup": "^0.48.2",
     "rollup-plugin-buble": "^0.15.0",
@@ -36,5 +41,6 @@
     "tslint": "^5.6.0",
     "tslint-config-standard": "^6.0.1",
     "uglify-js": "^3.0.28"
-  }
+  },
+  "license": "MIT"
 }
