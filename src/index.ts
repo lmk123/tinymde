@@ -65,7 +65,7 @@ export default class {
    */
   setSelection (start: number, end?: number) {
     const { el } = this
-    el.setSelectionRange(start, end == null ? start : end)
+    el.setSelectionRange(start, end === undefined ? start : end)
     el.focus()
   }
 
@@ -149,14 +149,20 @@ export default class {
     let end = 0
 
     for (let i = 0; i < count; i++) {
-      const startChar = value[selectionStart - (i + 1)]
-      if (startChar !== '\n' && startChar !== undefined) {
-        start += 1
+      const startIndex = selectionStart - (i + 1)
+      if (startIndex >= 0) {
+        const startChar = value[startIndex]
+        if (startChar !== '\n') {
+          start += 1
+        }
       }
 
-      const endChar = value[selectionEnd + i]
-      if (endChar !== '\n' && endChar !== undefined) {
-        end += 1
+      const endIndex = selectionEnd + i
+      if (endIndex > value.length) {
+        const endChar = value[selectionEnd + i]
+        if (endChar !== '\n') {
+          end += 1
+        }
       }
     }
 

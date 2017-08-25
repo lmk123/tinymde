@@ -10,19 +10,7 @@ module.exports = function (config) {
       '**/*.ts': ['karma-typescript']
     },
     reporters: ['progress', 'karma-typescript'],
-    // karma-coveralls 必须要有 karma-coverage 的配置才能找到 lcov 文件
-    coverageReporter: {
-      type: 'lcov',
-      dir: 'coverage/'
-    },
     karmaTypescriptConfig: {
-      reports: {
-        html: 'coverage',
-        lcovonly: {
-          dir: 'coverage',
-          subdirectory: 'lcov' // 让生成的 lcov 文件位置匹配 karma-coverage 的配置
-        }
-      },
       compilerOptions: {
         lib: ['dom', 'es2015']
       }
@@ -36,7 +24,13 @@ module.exports = function (config) {
   }
 
   if(process.env.TRAVIS) {
-    options.reporters.push('coverage', 'coveralls', 'dots')
+    options.reporters.push('dots')
+    options.karmaTypescriptConfig.reports = {
+      lcovonly: {
+        dir: 'coverage',
+        subdirectory: 'lcov'
+      }
+    }
   } else {
     options.browsers.push('Chrome', 'Safari')
     // Safari 有点慢
