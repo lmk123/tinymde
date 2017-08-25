@@ -211,48 +211,6 @@ export default class {
   }
 
   /**
-   * link() 与 image() 的操作基本一样，所以提取出来了一个内部的公用方法
-   * @param {string} url
-   * @param {boolean} isLink
-   */
-  private linkOrImage (url?: string, isLink?: boolean) {
-    let hasUrl = true
-    let intro = (isLink ? '' : '!') + '['
-    if (!url) {
-      hasUrl = false
-      url = isLink ? 'link' : 'image url'
-    }
-
-    const outroIn = ']('
-    const outroOut = ')'
-    const outro = outroIn + url + outroOut
-
-    const { selectionStart, selectionEnd, value } = this.el
-    const collapsed = selectionStart === selectionEnd
-    this.wrap({
-      intro,
-      outro
-    }, collapsed) // 如果用户调用方法前没有选中文本，则由 wrap 方法自动将光标置于中括号内
-
-    // 如果用户调用方法前有选中的文本
-    if (!collapsed) {
-      const { length } = value.slice(selectionStart, selectionEnd)
-
-      // 如果显式的传入了 url 参数，则将光标置于末尾
-      if (hasUrl) {
-        this.setSelection(selectionEnd + intro.length + outro.length)
-      } else { // 否则选中 url 部分
-        const start = selectionStart + intro.length + length + outroIn.length
-        this.setSelection(start, start + url.length)
-      }
-
-      this.saveState()
-    }
-
-    return this
-  }
-
-  /**
    * 无序列表
    */
   ul () {
@@ -355,6 +313,48 @@ export default class {
     this.setSelection(selectionStart + fragment.length, selectionEnd + fragment.length)
 
     this.saveState()
+    return this
+  }
+
+  /**
+   * link() 与 image() 的操作基本一样，所以提取出来了一个内部的公用方法
+   * @param {string} url
+   * @param {boolean} isLink
+   */
+  private linkOrImage (url?: string, isLink?: boolean) {
+    let hasUrl = true
+    let intro = (isLink ? '' : '!') + '['
+    if (!url) {
+      hasUrl = false
+      url = isLink ? 'link' : 'image url'
+    }
+
+    const outroIn = ']('
+    const outroOut = ')'
+    const outro = outroIn + url + outroOut
+
+    const { selectionStart, selectionEnd, value } = this.el
+    const collapsed = selectionStart === selectionEnd
+    this.wrap({
+      intro,
+      outro
+    }, collapsed) // 如果用户调用方法前没有选中文本，则由 wrap 方法自动将光标置于中括号内
+
+    // 如果用户调用方法前有选中的文本
+    if (!collapsed) {
+      const { length } = value.slice(selectionStart, selectionEnd)
+
+      // 如果显式的传入了 url 参数，则将光标置于末尾
+      if (hasUrl) {
+        this.setSelection(selectionEnd + intro.length + outro.length)
+      } else { // 否则选中 url 部分
+        const start = selectionStart + intro.length + length + outroIn.length
+        this.setSelection(start, start + url.length)
+      }
+
+      this.saveState()
+    }
+
     return this
   }
 }
