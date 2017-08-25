@@ -10,10 +10,17 @@ module.exports = function (config) {
       '**/*.ts': ['karma-typescript']
     },
     reporters: ['progress', 'karma-typescript'],
+    coverageReporter: {
+      type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
+      dir: 'coverage/'
+    },
     karmaTypescriptConfig: {
       reports: {
         html: 'coverage',
-        lcovonly: 'coverage'
+        lcovonly: {
+          dir: 'coverage',
+          subdirectory: 'lcov'
+        }
       },
       compilerOptions: {
         lib: ['dom', 'es2015']
