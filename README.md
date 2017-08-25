@@ -1,0 +1,5 @@
+[![Build Status](https://img.shields.io/travis/lmk123/tinymde/master.svg?style=flat-square)](https://travis-ci.org/lmk123/tinymde)
+[![Coverage Status](https://img.shields.io/coveralls/lmk123/tinymde/master.svg?style=flat-square)](https://coveralls.io/github/lmk123/tinymde?branch=master)
+[![NPM Version](https://img.shields.io/npm/v/tinymde.svg?style=flat-square)](https://www.npmjs.com/package/tinymde)
+[![dependencies Status](https://img.shields.io/david/lmk123/tinymde.svg?style=flat-square)](https://david-dm.org/lmk123/tinymde)
+[![devDependencies Status](https://img.shields.io/david/dev/lmk123/tinymde.svg?style=flat-square)](https://david-dm.org/lmk123/tinymde?type=dev)
