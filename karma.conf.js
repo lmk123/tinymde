@@ -1,57 +1,55 @@
 module.exports = function (config) {
-  // https://github.com/angular/angular.js/blob/master/karma-shared.conf.js#L36
+  // https://github.com/vuejs/vue/blob/dev/test/unit/karma.sauce.config.js#L22
   const customLaunchers = {
-    'SL_Chrome': {
+    // the cool kids
+    sl_chrome: {
       base: 'SauceLabs',
       browserName: 'chrome',
-      version: '47'
+      platform: 'Windows 7'
     },
-    'SL_Firefox': {
+    sl_firefox: {
       base: 'SauceLabs',
-      browserName: 'firefox',
-      version: '43'
+      browserName: 'firefox'
     },
-    'SL_Safari_8': {
-      base: 'SauceLabs',
-      browserName: 'safari',
-      platform: 'OS X 10.10',
-      version: '8'
-    },
-    'SL_Safari_9': {
+    sl_mac_safari: {
       base: 'SauceLabs',
       browserName: 'safari',
-      platform: 'OS X 10.11',
-      version: '9'
+      platform: 'OS X 10.10'
     },
-    'SL_IE_9': {
+    // ie family
+    sl_ie_9: {
       base: 'SauceLabs',
       browserName: 'internet explorer',
-      platform: 'Windows 2008',
+      platform: 'Windows 7',
       version: '9'
     },
-    'SL_IE_10': {
+    sl_ie_10: {
       base: 'SauceLabs',
       browserName: 'internet explorer',
-      platform: 'Windows 2012',
+      platform: 'Windows 8',
       version: '10'
     },
-    'SL_IE_11': {
+    sl_ie_11: {
       base: 'SauceLabs',
       browserName: 'internet explorer',
       platform: 'Windows 8.1',
       version: '11'
     },
-    'SL_iOS': {
+    sl_edge: {
+      base: 'SauceLabs',
+      browserName: 'MicrosoftEdge',
+      platform: 'Windows 10'
+    },
+    // mobile
+    sl_ios_safari_9: {
       base: 'SauceLabs',
       browserName: 'iphone',
-      platform: 'OS X 10.10',
-      version: '8.1'
+      version: '10.3'
     },
-    'SL_Android': {
+    sl_android_6_0: {
       base: 'SauceLabs',
       browserName: 'android',
-      platform: 'Linux',
-      version: '4.2'
+      version: '6.0'
     }
   }
 
