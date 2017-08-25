@@ -1,5 +1,3 @@
-import TinyEmitter from 'tiny-emitter'
-
 import {
   StringOrIntroOutro,
   AnyFunc,
@@ -23,7 +21,7 @@ export interface Options {
   [otherProps: string]: any // 允许用户传入自定义参数
 }
 
-export default class extends TinyEmitter {
+export default class {
   el: HTMLTextAreaElement
   private history: State[]
   private hid: number
@@ -31,8 +29,6 @@ export default class extends TinyEmitter {
   private maxRecords: number
 
   constructor (el: string | HTMLTextAreaElement, options?: Options) {
-    super()
-
     this.maxRecords = options && options.maxRecords || 100
     this.history = []
     this.hid = -1

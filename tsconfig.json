@@ -5,11 +5,10 @@
     "strict": true,
     "declaration": true,
     "declarationDir": "dist",
-    "target": "es2015",
-    // 使用 es6 的模块语法导入 tiny-emitter 的时候需要开启这项设置
-    "allowSyntheticDefaultImports": true
+    "target": "es2015"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "test/**/*"
   ]
 }
