@@ -157,9 +157,9 @@ export default class {
         }
       }
 
-      const endIndex = selectionEnd + i
-      if (endIndex > value.length) {
-        const endChar = value[selectionEnd + i]
+      const endIndex = selectionEnd + (1 + i)
+      if (endIndex < value.length) {
+        const endChar = value[selectionEnd]
         if (endChar !== '\n') {
           end += 1
         }
@@ -174,44 +174,48 @@ export default class {
 
   /**
    * ol()、ul()、task() 与 quote() 的底层方法。
-   * @param {string} pattern - 每一行前面要添加的前缀，可以包含 `{i}` 会被替换成 index
-   * @param {number} brCount - 满足多少个换行符时才添加前缀。一般需要两个，但 quote() 方法只需要一个。
+   * @param pattern - 每一行后面要添加的前缀，可以提供一个方法动态生成，例如有序列表就需要添加递增的数字前缀
+   * @param brCount - 满足多少个换行符时才添加前缀。一般需要两个，但 quote() 方法只需要一个。
    */
-  list (pattern: string, brCount = 2) {
+  list (pattern: string | ((index: number) => string), brCount = 2) {
     let symbolFunc: (index: number) => string
 
-    if (pattern.indexOf('{i}') >= 0) {
-      symbolFunc = index => pattern.replace('{i}', String(index + 1))
-    } else {
+    if (typeof pattern === 'string') {
       symbolFunc = () => pattern
+    } else {
+      symbolFunc = pattern
     }
 
     const newlinePad = this.padNewline()
 
     const { selectionStart, selectionEnd, value } = this.el
-    let newString = value.slice(selectionStart, selectionEnd)
-    let startOffset = 0
-    let endOffset = 0
+    const selectedString = value.slice(selectionStart, selectionEnd)
 
+    // 记录一下当前正在添加的是第几个前缀
     let index = 0
+    // 一个用来判断需要满足多少个换行符才添加前缀的正则。
+    // 一般情况下只会在两个换行符后面添加前缀，但 quote() 方法需要在满足一个换行符时就添加。
     const brReg = new RegExp('\n{' + brCount + '}', 'g')
-    newString = newString.replace(brReg, match => {
+    let newString = selectedString.replace(brReg, match => {
       index += 1
-      const symbol = symbolFunc(index)
-      endOffset += symbol.length
-      return match + symbol
+      return match + symbolFunc(index)
     })
 
-    const intro = repeat('\n', newlinePad.start)
+    // 需要在选中文本前面添加适当的换行符，与上面的内容分隔开来
+    const introBr = repeat('\n', newlinePad.start)
+    // 除此之外，还需要在开头添加前缀
     const firstSymbol = symbolFunc(0)
+    // 另外还需要在选中文本后面添加适当的换行符，与下面的内容分隔开来
     const outro = repeat('\n', newlinePad.end)
-    startOffset += intro.length
-    endOffset += outro.length + firstSymbol.length
-    newString = intro + firstSymbol + newString + outro
+    // 所以最终的文本应该是 开头的换行符 + 第一个前缀 + 在内容中添加过换行符的文本 + 末尾的换行符
+    newString = introBr + firstSymbol + newString + outro
 
+    // 用最终处理过后的文本替换掉原本的文本
     this.el.value = insertString(value, selectionStart, newString, selectionEnd)
-    // 如果只有一个段落，则选中的时候不要包含前缀，所以 start 在 index 等于 0 时加上了第一个前缀的长度
-    this.setSelection(selectionStart + startOffset + (index === 0 ? firstSymbol.length : 0), selectionEnd + endOffset)
+
+    // 因为不想选中前面添加的换行符，所以选中的开始位置要加上前置换行符的长度
+    // 因为不想选中后面添加的换行符，所以选中的结束位置要减去后置换行符的长度
+    this.setSelection(selectionStart + introBr.length, selectionStart + newString.length - outro.length)
     this.saveState()
     return this
   }
@@ -227,7 +231,7 @@ export default class {
    * 有序列表
    */
   ol () {
-    return this.list('{i}. ')
+    return this.list(index => `${index + 1}. `)
   }
 
   /**
