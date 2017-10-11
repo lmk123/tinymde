@@ -4,7 +4,7 @@
     "moduleResolution": "node",
     "strict": true,
     "declaration": true,
-    "declarationDir": "dist",
+    "declarationDir": "declaration",
     "target": "es2015"
   },
   "include": [

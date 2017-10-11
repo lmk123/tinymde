@@ -9,10 +9,11 @@
   "main": "dist/tinymde.common.js",
   "module": "dist/tinymde.esm.js",
   "unpkg": "dist/tinymde.js",
-  "types": "dist/src/index.d.ts",
+  "types": "declaration/src/index.d.ts",
   "files": [
     "src",
-    "dist"
+    "dist",
+    "declaration/src"
   ],
   "scripts": {
     "dev": "rollup -c build/dev.js -w",

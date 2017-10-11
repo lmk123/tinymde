@@ -3,6 +3,7 @@
 /.rpt2_cache/
 .DS_Store
 /coverage/
+/declaration/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
