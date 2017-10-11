@@ -49,7 +49,7 @@ export type AnyFunc = (...a: any[]) => any
  * @param name
  * @param handler
  */
-export function addEvent (el: EventTarget, name: string, handler: (event: Event) => any) {
+export function addEvent (el: EventTarget, name: string, handler: (event: Event) => void) {
   el.addEventListener(name, handler)
   return function () {
     el.removeEventListener(name, handler)

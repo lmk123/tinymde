@@ -33,22 +33,26 @@ export default class {
     this.history = []
     this.hid = -1
 
+    let element: HTMLTextAreaElement
+
     if (typeof el === 'string') {
-      el = (document.querySelector(el) as HTMLTextAreaElement)
+      element = (document.querySelector(el) as HTMLTextAreaElement)
+    } else {
+      element = el
     }
 
     this.unbinds = [
-      addEvent(el, 'mouseup', () => {
-        if ((el as HTMLTextAreaElement).selectionStart !== (el as HTMLTextAreaElement).selectionEnd) {
+      addEvent(element, 'mouseup', () => {
+        if (element.selectionStart !== element.selectionEnd) {
           this.saveState()
         }
       }),
-      addEvent(el, 'input', debounce(() => {
+      addEvent(element, 'input', debounce(() => {
         this.saveState()
       }))
     ]
 
-    this.el = el
+    this.el = element
 
     this.saveState()
   }
@@ -122,23 +126,6 @@ export default class {
   }
 
   /**
-   * 包裹用户选中文本的快捷方法。
-   * @param introOutro
-   * @param autoSelect
-   */
-  wrap (introOutro: StringOrIntroOutro, autoSelect = true) {
-    const { intro, outro } = getInOut(introOutro)
-    const { selectionStart, selectionEnd, value } = this.el
-    this.el.value = insertString(value, selectionStart, intro + value.slice(selectionStart, selectionEnd) + outro, selectionEnd)
-    if (autoSelect) {
-      const selectionOffset = intro.length
-      this.setSelection(selectionStart + selectionOffset, selectionEnd + selectionOffset)
-      this.saveState()
-    }
-    return this
-  }
-
-  /**
    * 一些操作需要给选中的文本前后补充换行符，例如 codeBlock() 与 list()。
    * 这个方法根据位置判断需要补充多少个换行符。
    * @param {number} count
@@ -170,6 +157,63 @@ export default class {
       start,
       end
     }
+  }
+
+  /**
+   * 包裹用户选中文本的快捷方法。
+   * @param introOutro
+   * @param autoSelect
+   */
+  wrap (introOutro: StringOrIntroOutro, autoSelect = true) {
+    const { intro, outro } = getInOut(introOutro)
+    const { selectionStart, selectionEnd, value } = this.el
+    this.el.value = insertString(value, selectionStart, intro + value.slice(selectionStart, selectionEnd) + outro, selectionEnd)
+    if (autoSelect) {
+      const selectionOffset = intro.length
+      this.setSelection(selectionStart + selectionOffset, selectionEnd + selectionOffset)
+      this.saveState()
+    }
+    return this
+  }
+
+  /**
+   * 粗体。
+   */
+  bold () {
+    return this.wrap('**')
+  }
+
+  /**
+   * 斜体。
+   */
+  italic () {
+    return this.wrap('_')
+  }
+
+  /**
+   * 删除线。
+   */
+  strikethrough () {
+    return this.wrap('~~')
+  }
+
+  /**
+   * 内联代码。
+   */
+  inlineCode () {
+    return this.wrap('`')
+  }
+
+  /**
+   * 块级代码。
+   */
+  blockCode () {
+    const newlinePad = this.padNewline()
+
+    return this.wrap({
+      intro: repeat('\n', newlinePad.start) + '```\n',
+      outro: '\n```' + repeat('\n', newlinePad.end)
+    })
   }
 
   /**
@@ -246,46 +290,6 @@ export default class {
    */
   task () {
     return this.list('- [ ] ')
-  }
-
-  /**
-   * 粗体。
-   */
-  bold () {
-    return this.wrap('**')
-  }
-
-  /**
-   * 斜体。
-   */
-  italic () {
-    return this.wrap('_')
-  }
-
-  /**
-   * 删除线。
-   */
-  strikethrough () {
-    return this.wrap('~~')
-  }
-
-  /**
-   * 内联代码。
-   */
-  inlineCode () {
-    return this.wrap('`')
-  }
-
-  /**
-   * 块级代码。
-   */
-  blockCode () {
-    const newlinePad = this.padNewline()
-
-    return this.wrap({
-      intro: repeat('\n', newlinePad.start) + '```\n',
-      outro: '\n```' + repeat('\n', newlinePad.end)
-    })
   }
 
   /**
