@@ -123,8 +123,8 @@ export default class {
 
   /**
    * 包裹用户选中文本的快捷方法。
-   * @param {StringOrIntroOutro} introOutro
-   * @param {boolean} autoSelect
+   * @param introOutro
+   * @param autoSelect
    */
   wrap (introOutro: StringOrIntroOutro, autoSelect = true) {
     const { intro, outro } = getInOut(introOutro)
@@ -148,8 +148,8 @@ export default class {
     let start = 0
     let end = 0
 
-    for (let i = 0; i < count; i++) {
-      const startIndex = selectionStart - (i + 1)
+    for (let i = 1; i <= count; i++) {
+      const startIndex = selectionStart - i
       if (startIndex >= 0) {
         const startChar = value[startIndex]
         if (startChar !== '\n') {
@@ -157,7 +157,7 @@ export default class {
         }
       }
 
-      const endIndex = selectionEnd + (1 + i)
+      const endIndex = selectionEnd + i
       if (endIndex < value.length) {
         const endChar = value[selectionEnd]
         if (endChar !== '\n') {
@@ -290,7 +290,7 @@ export default class {
 
   /**
    * 链接。
-   * @param {string} url
+   * @param url
    */
   link (url?: string) {
     return this.linkOrImage(url, true)
@@ -306,7 +306,7 @@ export default class {
 
   /**
    * 标题。
-   * @param {number} level
+   * @param level
    */
   heading (level: 1 | 2 | 3 | 4 | 5 | 6) {
     const { selectionStart, selectionEnd, value } = this.el
@@ -328,8 +328,8 @@ export default class {
 
   /**
    * link() 与 image() 的操作基本一样，所以提取出来了一个内部的公用方法
-   * @param {string} url
-   * @param {boolean} isLink
+   * @param url
+   * @param isLink
    */
   private linkOrImage (url?: string, isLink?: boolean) {
     let hasUrl = true

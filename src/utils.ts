@@ -28,7 +28,6 @@ export function getInOut (inOut: StringOrIntroOutro): IntroOutro {
 
 /**
  * 重复字符串
- * @type {(str, count) => string}
  */
 export const repeat: (str: string, count: number) => string = String.prototype.repeat
     ? function (str, count) {
@@ -46,10 +45,9 @@ export type AnyFunc = (...a: any[]) => any
 
 /**
  * 注册事件的便捷方法。
- * @param {EventTarget} el
- * @param {string} name
- * @param {(event: Event) => any} handler
- * @return {() => void}
+ * @param el
+ * @param name
+ * @param handler
  */
 export function addEvent (el: EventTarget, name: string, handler: (event: Event) => any) {
   el.addEventListener(name, handler)
@@ -60,9 +58,8 @@ export function addEvent (el: EventTarget, name: string, handler: (event: Event)
 
 /**
  * 简单的 debounce 方法
- * @param {function} func
- * @param {number} timeout
- * @return {function}
+ * @param func
+ * @param timeout
  */
 export function debounce (func: AnyFunc, timeout = 250) {
   let timeId: number
