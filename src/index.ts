@@ -28,7 +28,7 @@ export default class {
   private unbinds: AnyFunc[]
   private maxRecords: number
 
-  constructor (el: string | HTMLTextAreaElement, options?: Options) {
+  constructor (el: string | HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void), options?: Options) {
     this.maxRecords = options && options.maxRecords || 100
     this.history = []
     this.hid = -1
@@ -37,6 +37,9 @@ export default class {
 
     if (typeof el === 'string') {
       element = (document.querySelector(el) as HTMLTextAreaElement)
+    } else if (typeof el === 'function') {
+      element = document.createElement('textarea')
+      el(element)
     } else {
       element = el
     }
