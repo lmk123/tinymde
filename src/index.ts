@@ -329,8 +329,20 @@ export default class {
     // 还原光标的位置
     this.setSelection(selectionStart + fragment.length, selectionEnd + fragment.length)
 
-    this.saveState()
-    return this
+    return this.saveState()
+  }
+
+  /**
+   * 分隔线。
+   */
+  hr () {
+    const { start, end } = this.padNewline()
+    const { el } = this
+    const { selectionStart } = el
+
+    el.value = insertString(el.value, selectionStart, repeat('\n', start) + '* * *' + repeat('\n', end), el.selectionEnd)
+    this.setSelection(selectionStart + start + 5/* '* * *'.length */ + end)
+    return this.saveState()
   }
 
   /**
