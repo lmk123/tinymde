@@ -22,7 +22,7 @@ export interface Options {
 }
 
 export default class {
-  el: HTMLTextAreaElement
+  private el: HTMLTextAreaElement
   private history: State[]
   private hid: number
   private unbinds: AnyFunc[]
@@ -74,6 +74,7 @@ export default class {
     const { el } = this
     el.setSelectionRange(start, end === undefined ? start : end)
     el.focus()
+    return this
   }
 
   /**
@@ -169,8 +170,9 @@ export default class {
    */
   wrap (introOutro: StringOrIntroOutro, autoSelect = true) {
     const { intro, outro } = getInOut(introOutro)
-    const { selectionStart, selectionEnd, value } = this.el
-    this.el.value = insertString(value, selectionStart, intro + value.slice(selectionStart, selectionEnd) + outro, selectionEnd)
+    const { el } = this
+    const { selectionStart, selectionEnd, value } = el
+    el.value = insertString(value, selectionStart, intro + value.slice(selectionStart, selectionEnd) + outro, selectionEnd)
     if (autoSelect) {
       const selectionOffset = intro.length
       this.setSelection(selectionStart + selectionOffset, selectionEnd + selectionOffset)
@@ -235,7 +237,8 @@ export default class {
 
     const newlinePad = this.padNewline()
 
-    const { selectionStart, selectionEnd, value } = this.el
+    const { el } = this
+    const { selectionStart, selectionEnd, value } = el
     const selectedString = value.slice(selectionStart, selectionEnd)
 
     // 记录一下当前正在添加的是第几个前缀
@@ -258,13 +261,12 @@ export default class {
     newString = introBr + firstSymbol + newString + outro
 
     // 用最终处理过后的文本替换掉原本的文本
-    this.el.value = insertString(value, selectionStart, newString, selectionEnd)
+    el.value = insertString(value, selectionStart, newString, selectionEnd)
 
     // 因为不想选中前面添加的换行符，所以选中的开始位置要加上前置换行符的长度
     // 因为不想选中后面添加的换行符，所以选中的结束位置要减去后置换行符的长度
     this.setSelection(selectionStart + introBr.length, selectionStart + newString.length - outro.length)
-    this.saveState()
-    return this
+    return this.saveState()
   }
 
   /**
@@ -297,18 +299,16 @@ export default class {
 
   /**
    * 链接。
-   * @param url
    */
-  link (url?: string) {
-    return this.linkOrImage(url, true)
+  link (url?: string, text?: string) {
+    return this.linkOrImage(url, text, true)
   }
 
   /**
    * 插入一张图片
-   * @param url
    */
-  image (url?: string) {
-    return this.linkOrImage(url)
+  image (url?: string, text?: string) {
+    return this.linkOrImage(url, text)
   }
 
   /**
@@ -347,43 +347,44 @@ export default class {
 
   /**
    * link() 与 image() 的操作基本一样，所以提取出来了一个内部的公用方法
-   * @param url
-   * @param isLink
    */
-  private linkOrImage (url?: string, isLink?: boolean) {
-    let hasUrl = true
-    let intro = (isLink ? '' : '!') + '['
-    if (!url) {
-      hasUrl = false
-      url = isLink ? 'link' : 'image url'
+  private linkOrImage (url = '', text?: string, isLink?: boolean) {
+    const { el } = this
+    const { selectionStart, selectionEnd, value } = el
+    const selectedText = value.slice(selectionStart, selectionEnd)
+
+    if (!text) {
+      text = selectedText
     }
+
+    let noUrl
+
+    if (!url) {
+      noUrl = true
+      url = 'url'
+    }
+
+    let intro = (isLink ? '' : '!') + '['
 
     const outroIn = ']('
     const outroOut = ')'
-    const outro = outroIn + url + outroOut
 
-    const { selectionStart, selectionEnd, value } = this.el
-    const collapsed = selectionStart === selectionEnd
-    this.wrap({
-      intro,
-      outro
-    }, collapsed) // 如果用户调用方法前没有选中文本，则由 wrap 方法自动将光标置于中括号内
+    const newString = intro + text + outroIn + url + outroOut
 
-    // 如果用户调用方法前有选中的文本
-    if (!collapsed) {
-      const { length } = value.slice(selectionStart, selectionEnd)
+    el.value = insertString(value, selectionStart, newString, selectionEnd)
 
-      // 如果显式的传入了 url 参数，则将光标置于末尾
-      if (hasUrl) {
-        this.setSelection(selectionEnd + intro.length + outro.length)
-      } else { // 否则选中 url 部分
-        const start = selectionStart + intro.length + length + outroIn.length
-        this.setSelection(start, start + url.length)
-      }
-
-      this.saveState()
+    if (!noUrl && text) {
+      // 如果既有 url 也有 text，则将光标放在最后面
+      this.setSelection(selectionStart + newString.length)
+    } else if (!text) {
+      // 如果没有描述，则将光标放在描述里
+      this.setSelection(selectionStart + intro.length)
+    } else if (noUrl) {
+      // 如果有描述但没有 url，则将光标放在 url 里
+      const start = selectionStart + intro.length + text.length + outroIn.length
+      this.setSelection(start, start + 3/* url.length */)
     }
 
-    return this
+    return this.saveState()
   }
 }
