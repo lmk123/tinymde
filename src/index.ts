@@ -6,7 +6,8 @@ import {
   insertString,
   repeat,
   debounce,
-  addEvent
+  addEvent,
+  noop
 } from './utils'
 
 interface State {
@@ -17,19 +18,25 @@ interface State {
 
 export interface Options {
   maxRecords?: number
+  saveDelay?: number
+  onSave?: AnyFunc
+}
 
-  [otherProps: string]: any // 允许用户传入自定义参数
+const defaultOptions = {
+  maxRecords: 100,
+  saveDelay: 3000,
+  onSave: noop
 }
 
 export default class {
   private el: HTMLTextAreaElement
+  private options: Options
   private history: State[]
   private hid: number
   private unbinds: AnyFunc[]
-  private maxRecords: number
 
   constructor (el: string | HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void), options?: Options) {
-    this.maxRecords = options && options.maxRecords || 100
+    const op = this.options = Object.assign({}, defaultOptions, options) as Options
     this.history = []
     this.hid = -1
 
@@ -45,14 +52,10 @@ export default class {
     }
 
     this.unbinds = [
-      addEvent(element, 'mouseup', () => {
-        if (element.selectionStart !== element.selectionEnd) {
-          this.saveState()
-        }
-      }),
       addEvent(element, 'input', debounce(() => {
         this.saveState()
-      }))
+        ;(op.onSave as AnyFunc)()
+      }, op.saveDelay))
     ]
 
     this.el = element
@@ -92,7 +95,7 @@ export default class {
     })
 
     // 如果更新后记录超出最大记录数则删除最前面的记录
-    if (history.length > this.maxRecords) {
+    if (history.length > (this.options.maxRecords as number)) {
       history.shift()
     } else { // 否则更新当前索引
       this.hid += 1
@@ -341,7 +344,7 @@ export default class {
     const { selectionStart } = el
 
     el.value = insertString(el.value, selectionStart, repeat('\n', start) + '* * *' + repeat('\n', end), el.selectionEnd)
-    this.setSelection(selectionStart + start + 5/* '* * *'.length */ + end)
+    this.setSelection(selectionStart + start + 5 /* '* * *'.length */ + end)
     return this.saveState()
   }
 

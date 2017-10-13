@@ -45,9 +45,6 @@ export type AnyFunc = (...a: any[]) => any
 
 /**
  * 注册事件的便捷方法。
- * @param el
- * @param name
- * @param handler
  */
 export function addEvent (el: EventTarget, name: string, handler: (event: Event) => void) {
   el.addEventListener(name, handler)
@@ -58,8 +55,6 @@ export function addEvent (el: EventTarget, name: string, handler: (event: Event)
 
 /**
  * 简单的 debounce 方法
- * @param func
- * @param timeout
  */
 export function debounce (func: AnyFunc, timeout = 250) {
   let timeId: number
@@ -70,3 +65,5 @@ export function debounce (func: AnyFunc, timeout = 250) {
     }, timeout)
   }
 }
+
+export function noop () {}
