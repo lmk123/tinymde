@@ -1,6 +1,5 @@
 import {
-  StringOrIntroOutro,
-  AnyFunc,
+  TStringOrIntroOutro,
   getInOut,
   insertString,
   repeat,
@@ -8,6 +7,10 @@ import {
   addEvent,
   noop
 } from './utils'
+
+export interface IVoidFunc {
+  (): void
+}
 
 interface State {
   selectionStart: number
@@ -18,7 +21,7 @@ interface State {
 export interface Options {
   maxRecords?: number
   saveDelay?: number
-  onSave?: AnyFunc
+  onSave?: IVoidFunc
 }
 
 const defaultOptions = {
@@ -28,28 +31,29 @@ const defaultOptions = {
 }
 
 export default class {
-  private el: HTMLTextAreaElement
+  el: HTMLTextAreaElement
   private options: Options
   private history: State[]
   private hid: number
-  private unbinds: AnyFunc[]
+  private unbinds: IVoidFunc[]
 
   constructor(
     el: string | HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void),
     options?: Options
   ) {
-    const op = (this.options = Object.assign(
-      {},
-      defaultOptions,
-      options
-    ) as Options)
+    const op = (this.options = Object.assign({}, defaultOptions, options))
     this.history = []
     this.hid = -1
 
     let element: HTMLTextAreaElement
 
     if (typeof el === 'string') {
-      element = document.querySelector(el) as HTMLTextAreaElement
+      const queryElement = document.querySelector(el)
+      if (queryElement instanceof HTMLTextAreaElement) {
+        element = queryElement
+      } else {
+        throw new TypeError('必须是一个 textarea 元素。')
+      }
     } else if (typeof el === 'function') {
       element = document.createElement('textarea')
       el(element)
@@ -63,13 +67,12 @@ export default class {
         'input',
         debounce(() => {
           this.saveState()
-          ;(op.onSave as AnyFunc)()
+          op.onSave()
         }, op.saveDelay)
       )
     ]
 
     this.el = element
-
     this.saveState()
   }
 
@@ -124,7 +127,7 @@ export default class {
     if (state) {
       this.hid = index
       this.el.value = state.value
-      this.setSelection(state.selectionStart, state.selectionEnd)
+      return this.setSelection(state.selectionStart, state.selectionEnd)
     }
     return this
   }
@@ -182,7 +185,7 @@ export default class {
    * @param introOutro
    * @param autoSelect
    */
-  wrap(introOutro: StringOrIntroOutro, autoSelect = true) {
+  wrap(introOutro: TStringOrIntroOutro, autoSelect = true) {
     const { intro, outro } = getInOut(introOutro)
     const { el } = this
     const { selectionStart, selectionEnd, value } = el
@@ -198,7 +201,7 @@ export default class {
         selectionStart + selectionOffset,
         selectionEnd + selectionOffset
       )
-      this.saveState()
+      return this.saveState()
     }
     return this
   }
@@ -285,8 +288,9 @@ export default class {
     // 用最终处理过后的文本替换掉原本的文本
     el.value = insertString(value, selectionStart, newString, selectionEnd)
 
-    // 因为不想选中前面添加的换行符，所以选中的开始位置要加上前置换行符的长度
-    // 因为不想选中后面添加的换行符，所以选中的结束位置要减去后置换行符的长度
+    // 因为不想选中前 后添加的换行符，
+    // 所以选中的开始位置要加上前置换行符的长度，
+    // 选中的结束位置要减去后置换行符的长度
     this.setSelection(
       selectionStart + introBr.length,
       selectionStart + newString.length - outro.length

@@ -1,3 +1,14 @@
+export interface IInterOutro {
+  intro: string
+  outro: string
+}
+
+export type TStringOrIntroOutro = string | IInterOutro
+
+export interface IAnyFunc {
+  (...a: any[]): any
+}
+
 /**
  * 在字符串中插入一段字符串
  * @param str - 原本的字符串
@@ -12,16 +23,12 @@ export function insertString(
   end?: number
 ) {
   if (!end) end = start
-
   const startString = str.slice(0, start)
   const endString = str.slice(start + (end - start))
   return startString + insert + endString
 }
 
-export type IntroOutro = { intro: string; outro: string }
-export type StringOrIntroOutro = string | IntroOutro
-
-export function getInOut(inOut: StringOrIntroOutro): IntroOutro {
+export function getInOut(inOut: TStringOrIntroOutro): IInterOutro {
   if (typeof inOut === 'string') {
     return {
       intro: inOut,
@@ -31,11 +38,14 @@ export function getInOut(inOut: StringOrIntroOutro): IntroOutro {
   return inOut
 }
 
+export interface IRepeatFunc {
+  (str: string, count: number): string
+}
+
 /**
  * 重复字符串
  */
-export const repeat: (str: string, count: number) => string = String.prototype
-  .repeat
+export const repeat: IRepeatFunc = String.prototype.repeat
   ? function(str, count) {
       return str.repeat(count)
     }
@@ -47,16 +57,13 @@ export const repeat: (str: string, count: number) => string = String.prototype
       return s
     }
 
-export type AnyFunc = (...a: any[]) => any
-
 /**
  * 注册事件的便捷方法。
  */
-export function addEvent(
-  el: EventTarget,
-  name: string,
-  handler: (event: Event) => void
-) {
+export function addEvent<
+  T extends EventTarget,
+  K extends keyof HTMLElementEventMap
+>(el: T, name: K, handler: (this: T, event: HTMLElementEventMap[K]) => void) {
   el.addEventListener(name, handler)
   return function() {
     el.removeEventListener(name, handler)
@@ -66,7 +73,7 @@ export function addEvent(
 /**
  * 简单的 debounce 方法
  */
-export function debounce(func: AnyFunc, timeout = 250) {
+export function debounce(func: IAnyFunc, timeout = 250) {
   let timeId: number
   return function(this: any, ...args: any[]) {
     window.clearTimeout(timeId)
