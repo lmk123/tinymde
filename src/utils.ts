@@ -5,7 +5,12 @@
  * @param insert - 要插入的字符串
  * @param end - 如果有 end 参数，则会替换掉 start 至 end 范围内的这段字符串
  */
-export function insertString(str: string, start: number, insert: string, end?: number) {
+export function insertString(
+  str: string,
+  start: number,
+  insert: string,
+  end?: number
+) {
   if (!end) end = start
 
   const startString = str.slice(0, start)
@@ -29,7 +34,8 @@ export function getInOut(inOut: StringOrIntroOutro): IntroOutro {
 /**
  * 重复字符串
  */
-export const repeat: (str: string, count: number) => string = String.prototype.repeat
+export const repeat: (str: string, count: number) => string = String.prototype
+  .repeat
   ? function(str, count) {
       return str.repeat(count)
     }
@@ -46,7 +52,11 @@ export type AnyFunc = (...a: any[]) => any
 /**
  * 注册事件的便捷方法。
  */
-export function addEvent(el: EventTarget, name: string, handler: (event: Event) => void) {
+export function addEvent(
+  el: EventTarget,
+  name: string,
+  handler: (event: Event) => void
+) {
   el.addEventListener(name, handler)
   return function() {
     el.removeEventListener(name, handler)
@@ -66,4 +76,5 @@ export function debounce(func: AnyFunc, timeout = 250) {
   }
 }
 
+// tslint:disable-next-line:no-empty
 export function noop() {}
