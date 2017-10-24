@@ -2,8 +2,7 @@
 /dist/
 /.rpt2_cache/
 .DS_Store
+/.idea/
 /coverage/
 /declaration/
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*

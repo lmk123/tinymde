@@ -1,7 +1,6 @@
 import {
   StringOrIntroOutro,
   AnyFunc,
-
   getInOut,
   insertString,
   repeat,
@@ -35,15 +34,22 @@ export default class {
   private hid: number
   private unbinds: AnyFunc[]
 
-  constructor (el: string | HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void), options?: Options) {
-    const op = this.options = Object.assign({}, defaultOptions, options) as Options
+  constructor(
+    el: string | HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void),
+    options?: Options
+  ) {
+    const op = (this.options = Object.assign(
+      {},
+      defaultOptions,
+      options
+    ) as Options)
     this.history = []
     this.hid = -1
 
     let element: HTMLTextAreaElement
 
     if (typeof el === 'string') {
-      element = (document.querySelector(el) as HTMLTextAreaElement)
+      element = document.querySelector(el) as HTMLTextAreaElement
     } else if (typeof el === 'function') {
       element = document.createElement('textarea')
       el(element)
@@ -52,10 +58,14 @@ export default class {
     }
 
     this.unbinds = [
-      addEvent(element, 'input', debounce(() => {
-        this.saveState()
-        ;(op.onSave as AnyFunc)()
-      }, op.saveDelay))
+      addEvent(
+        element,
+        'input',
+        debounce(() => {
+          this.saveState()
+          ;(op.onSave as AnyFunc)()
+        }, op.saveDelay)
+      )
     ]
 
     this.el = element
@@ -66,14 +76,14 @@ export default class {
   /**
    * 摧毁实例。目前其实就解绑了一些事件。
    */
-  destroy () {
+  destroy() {
     this.unbinds.forEach(unbind => unbind())
   }
 
   /**
    * 设置当前的选中范围
    */
-  setSelection (start: number, end?: number) {
+  setSelection(start: number, end?: number) {
     const { el } = this
     el.setSelectionRange(start, end === undefined ? start : end)
     el.focus()
@@ -83,7 +93,7 @@ export default class {
   /**
    * 保存编辑器当前的状态。
    */
-  saveState () {
+  saveState() {
     const { selectionStart, selectionEnd, value } = this.el
     const { history, hid } = this
 
@@ -97,7 +107,8 @@ export default class {
     // 如果更新后记录超出最大记录数则删除最前面的记录
     if (history.length > (this.options.maxRecords as number)) {
       history.shift()
-    } else { // 否则更新当前索引
+    } else {
+      // 否则更新当前索引
       this.hid += 1
     }
 
@@ -106,9 +117,9 @@ export default class {
 
   /**
    * 回到编辑器的指定位置的状态。
-   * @param {number} index
+   * @param index
    */
-  restoreState (index: number) {
+  restoreState(index: number) {
     const state = this.history[index]
     if (state) {
       this.hid = index
@@ -121,14 +132,14 @@ export default class {
   /**
    * 撤销，即回到上一个状态。
    */
-  undo () {
+  undo() {
     return this.restoreState(this.hid - 1)
   }
 
   /**
    * 重做，即前进到下一个状态。
    */
-  redo () {
+  redo() {
     return this.restoreState(this.hid + 1)
   }
 
@@ -137,7 +148,7 @@ export default class {
    * 这个方法根据位置判断需要补充多少个换行符。
    * @param {number} count
    */
-  padNewline (count = 2) {
+  padNewline(count = 2) {
     const { selectionStart, selectionEnd, value } = this.el
     let start = 0
     let end = 0
@@ -171,14 +182,22 @@ export default class {
    * @param introOutro
    * @param autoSelect
    */
-  wrap (introOutro: StringOrIntroOutro, autoSelect = true) {
+  wrap(introOutro: StringOrIntroOutro, autoSelect = true) {
     const { intro, outro } = getInOut(introOutro)
     const { el } = this
     const { selectionStart, selectionEnd, value } = el
-    el.value = insertString(value, selectionStart, intro + value.slice(selectionStart, selectionEnd) + outro, selectionEnd)
+    el.value = insertString(
+      value,
+      selectionStart,
+      intro + value.slice(selectionStart, selectionEnd) + outro,
+      selectionEnd
+    )
     if (autoSelect) {
       const selectionOffset = intro.length
-      this.setSelection(selectionStart + selectionOffset, selectionEnd + selectionOffset)
+      this.setSelection(
+        selectionStart + selectionOffset,
+        selectionEnd + selectionOffset
+      )
       this.saveState()
     }
     return this
@@ -187,35 +206,35 @@ export default class {
   /**
    * 粗体。
    */
-  bold () {
+  bold() {
     return this.wrap('**')
   }
 
   /**
    * 斜体。
    */
-  italic () {
+  italic() {
     return this.wrap('_')
   }
 
   /**
    * 删除线。
    */
-  strikethrough () {
+  strikethrough() {
     return this.wrap('~~')
   }
 
   /**
    * 内联代码。
    */
-  inlineCode () {
+  inlineCode() {
     return this.wrap('`')
   }
 
   /**
    * 块级代码。
    */
-  blockCode () {
+  blockCode() {
     const newlinePad = this.padNewline()
 
     return this.wrap({
@@ -229,7 +248,7 @@ export default class {
    * @param pattern - 每一行后面要添加的前缀，可以提供一个方法动态生成，例如有序列表就需要添加递增的数字前缀
    * @param brCount - 满足多少个换行符时才添加前缀。一般需要两个，但 quote() 方法只需要一个。
    */
-  list (pattern: string | ((index: number) => string), brCount = 2) {
+  list(pattern: string | ((index: number) => string), brCount = 2) {
     let symbolFunc: (index: number) => string
 
     if (typeof pattern === 'string') {
@@ -268,49 +287,52 @@ export default class {
 
     // 因为不想选中前面添加的换行符，所以选中的开始位置要加上前置换行符的长度
     // 因为不想选中后面添加的换行符，所以选中的结束位置要减去后置换行符的长度
-    this.setSelection(selectionStart + introBr.length, selectionStart + newString.length - outro.length)
+    this.setSelection(
+      selectionStart + introBr.length,
+      selectionStart + newString.length - outro.length
+    )
     return this.saveState()
   }
 
   /**
    * 无序列表
    */
-  ul () {
+  ul() {
     return this.list('- ')
   }
 
   /**
    * 有序列表
    */
-  ol () {
+  ol() {
     return this.list(index => `${index + 1}. `)
   }
 
   /**
    * 引用。
    */
-  quote () {
+  quote() {
     return this.list('> ', 1)
   }
 
   /**
    * 任务列表。
    */
-  task () {
+  task() {
     return this.list('- [ ] ')
   }
 
   /**
    * 链接。
    */
-  link (url?: string, text?: string) {
+  link(url?: string, text?: string) {
     return this.linkOrImage(url, text, true)
   }
 
   /**
    * 插入一张图片
    */
-  image (url?: string, text?: string) {
+  image(url?: string, text?: string) {
     return this.linkOrImage(url, text)
   }
 
@@ -318,7 +340,7 @@ export default class {
    * 标题。
    * @param level
    */
-  heading (level: 1 | 2 | 3 | 4 | 5 | 6) {
+  heading(level: 1 | 2 | 3 | 4 | 5 | 6) {
     const { selectionStart, selectionEnd, value } = this.el
 
     // 查找离光标最近的换行符
@@ -330,7 +352,10 @@ export default class {
     this.el.value = insertString(value, brIndex, fragment)
 
     // 还原光标的位置
-    this.setSelection(selectionStart + fragment.length, selectionEnd + fragment.length)
+    this.setSelection(
+      selectionStart + fragment.length,
+      selectionEnd + fragment.length
+    )
 
     return this.saveState()
   }
@@ -338,12 +363,17 @@ export default class {
   /**
    * 分隔线。
    */
-  hr () {
+  hr() {
     const { start, end } = this.padNewline()
     const { el } = this
     const { selectionStart } = el
 
-    el.value = insertString(el.value, selectionStart, repeat('\n', start) + '* * *' + repeat('\n', end), el.selectionEnd)
+    el.value = insertString(
+      el.value,
+      selectionStart,
+      repeat('\n', start) + '* * *' + repeat('\n', end),
+      el.selectionEnd
+    )
     this.setSelection(selectionStart + start + 5 /* '* * *'.length */ + end)
     return this.saveState()
   }
@@ -351,7 +381,7 @@ export default class {
   /**
    * link() 与 image() 的操作基本一样，所以提取出来了一个内部的公用方法
    */
-  private linkOrImage (url = '', text?: string, isLink?: boolean) {
+  private linkOrImage(url = '', text?: string, isLink?: boolean) {
     const { el } = this
     const { selectionStart, selectionEnd, value } = el
     const selectedText = value.slice(selectionStart, selectionEnd)
@@ -385,7 +415,7 @@ export default class {
     } else if (noUrl) {
       // 如果有描述但没有 url，则将光标放在 url 里
       const start = selectionStart + intro.length + text.length + outroIn.length
-      this.setSelection(start, start + 3/* url.length */)
+      this.setSelection(start, start + 3 /* url.length */)
     }
 
     return this.saveState()
