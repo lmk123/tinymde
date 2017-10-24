@@ -165,9 +165,9 @@ export default class {
         }
       }
 
-      const endIndex = selectionEnd + i
+      const endIndex = selectionEnd + (i - 1)
       if (endIndex < value.length) {
-        const endChar = value[selectionEnd]
+        const endChar = value[endIndex]
         if (endChar !== '\n') {
           end += 1
         }
@@ -378,7 +378,7 @@ export default class {
       repeat('\n', start) + '* * *' + repeat('\n', end),
       el.selectionEnd
     )
-    this.setSelection(selectionStart + start + 5 /* '* * *'.length */ + end)
+    this.setSelection(selectionStart + start + 5 /* '* * *'.length */ + end + 1)
     return this.saveState()
   }
 
