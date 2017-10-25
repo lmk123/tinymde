@@ -1,29 +1,30 @@
-module.exports = function (config) {
+module.exports = function(config) {
   const options = {
     basePath: '',
     frameworks: ['jasmine', 'karma-typescript'],
-    files: [
-      'src/**/*.ts',
-      'test/**/*.spec.ts'
-    ],
+    files: ['src/**/*.ts', 'test/**/*.ts'],
     preprocessors: {
       '**/*.ts': ['karma-typescript']
     },
     reporters: ['progress', 'karma-typescript'],
     karmaTypescriptConfig: {
       compilerOptions: {
-        lib: ['dom', 'es2015']
+        lib: ['dom', 'es2015'],
+        target: 'es5'
+      },
+      coverageOptions: {
+        exclude: /\.(d|spec|test|helper)\.ts/i
       }
     },
     browsers: ['PhantomJS'],
     port: 9876,
     colors: true,
-    logLevel: config.LOG_INFO,
-    autoWatch: false,
-    singleRun: true
+    logLevel: config.LOG_INFO
   }
 
-  if(process.env.TRAVIS) {
+  if (process.env.TRAVIS) {
+    options.singleRun = true
+    options.autoWatch = false
     options.reporters.push('dots')
     options.karmaTypescriptConfig.reports = {
       lcovonly: {

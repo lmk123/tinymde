@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@types/karma-jasmine": "0.0.29",
+    "core-js": "^2.5.1",
     "coveralls": "^3.0.0",
     "fs-extra": "^4.0.2",
     "jasmine-core": "^2.8.0",

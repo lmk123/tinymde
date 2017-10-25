@@ -153,24 +153,34 @@ export default class {
    */
   padNewline(count = 2) {
     const { selectionStart, selectionEnd, value } = this.el
-    let start = 0
-    let end = 0
 
+    // 先检查需要多少个前置换行符
+    let start = count
     for (let i = 1; i <= count; i++) {
       const startIndex = selectionStart - i
-      if (startIndex >= 0) {
-        const startChar = value[startIndex]
-        if (startChar !== '\n') {
-          start += 1
-        }
+      if (startIndex < 0) {
+        start = 0
+        break
       }
+      if (value[startIndex] === '\n') {
+        start -= 1
+      } else {
+        break
+      }
+    }
 
-      const endIndex = selectionEnd + (i - 1)
-      if (endIndex < value.length) {
-        const endChar = value[endIndex]
-        if (endChar !== '\n') {
-          end += 1
-        }
+    // 再检查需要多少个后置换行符
+    let end = count
+    for (let i = 0; i < count; i++) {
+      const endIndex = selectionEnd + i
+      if (endIndex >= value.length) {
+        end = 0
+        break
+      }
+      if (value[endIndex] === '\n') {
+        end -= 1
+      } else {
+        break
       }
     }
 
@@ -182,10 +192,8 @@ export default class {
 
   /**
    * 包裹用户选中文本的快捷方法。
-   * @param introOutro
-   * @param autoSelect
    */
-  wrap(introOutro: TStringOrIntroOutro, autoSelect = true) {
+  wrap(introOutro: TStringOrIntroOutro) {
     const { intro, outro } = getInOut(introOutro)
     const { el } = this
     const { selectionStart, selectionEnd, value } = el
@@ -195,15 +203,12 @@ export default class {
       intro + value.slice(selectionStart, selectionEnd) + outro,
       selectionEnd
     )
-    if (autoSelect) {
-      const selectionOffset = intro.length
-      this.setSelection(
-        selectionStart + selectionOffset,
-        selectionEnd + selectionOffset
-      )
-      return this.saveState()
-    }
-    return this
+    const selectionOffset = intro.length
+    this.setSelection(
+      selectionStart + selectionOffset,
+      selectionEnd + selectionOffset
+    )
+    return this.saveState()
   }
 
   /**
