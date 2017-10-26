@@ -1,20 +1,21 @@
-import { IState } from './utils/manipulate-state/types'
+import copyState from './utils/copy-state'
+import { IState } from './types'
 
 export default class StateHistory {
+  private readonly state: IState
   private readonly max: number
   private history: IState[]
   private current: number
 
-  constructor(max = 50) {
+  constructor(state: IState, max = 50) {
+    this.state = state
     this.max = max
     this.clear()
+    this.push()
   }
 
-  get(index = this.current) {
-    return this.history[index]
-  }
-
-  push(state: IState) {
+  push() {
+    const state = copyState(this.state)
     const { history, current } = this
 
     // 删除后面的状态并添加新状态
@@ -29,27 +30,12 @@ export default class StateHistory {
     }
   }
 
-  replace(state: IState) {
-    const { history } = this
-    let deleted
-    if (this.current >= 0) {
-      deleted = history.pop()
-    } else {
-      this.current = 0
-    }
-    history.push(state)
-    return deleted
-  }
-
-  restore(index: number) {
-    if (index >= 0 && index <= this.current) {
-      this.current = index
-      return this.get()
-    }
-  }
-
   go(count: number) {
-    return this.restore(this.current + count)
+    const newIndex = this.current + count
+    if (newIndex >= 0 && newIndex < this.current) {
+      this.current = newIndex
+      Object.assign(this.state, this.history[newIndex])
+    }
   }
 
   clear() {

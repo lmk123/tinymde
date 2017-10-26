@@ -1,4 +1,4 @@
-import { IState } from './manipulate-state/types'
+import { IState } from '../types'
 import repeat from './string-repeat'
 
 /**

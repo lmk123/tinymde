@@ -1,6 +1,6 @@
-import { IState } from './types'
-import splice from '../string-splice'
-import repeat from '../string-repeat'
+import { IState } from '../types'
+import splice from '../utils/string-splice'
+import repeat from '../utils/string-repeat'
 
 const lf = '\n'
 const lfLength = lf.length
@@ -13,9 +13,7 @@ export default function(state: IState, level: 1 | 2 | 3 | 4 | 5 | 6) {
 
   // 插入 # 号
   const fragment = repeat('#', level) + ' '
-  const newState = {} as IState
-  newState.value = splice(value, brIndex, 0, fragment)
-  newState.selectionStart = selectionStart + fragment.length
-  newState.selectionEnd = selectionEnd + fragment.length
-  return newState
+  state.value = splice(value, brIndex, 0, fragment)
+  state.selectionStart = selectionStart + fragment.length
+  state.selectionEnd = selectionEnd + fragment.length
 }

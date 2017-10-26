@@ -1,5 +1,4 @@
-import { IAnyFunc } from './utils'
-import { IState } from './utils/manipulate-state/types'
+import { IState } from './types'
 import noop from './utils/noop'
 import addEvent from './utils/add-event'
 import debounce from './utils/debounce'
@@ -7,11 +6,11 @@ import padNewLines from './utils/pad-newlines'
 
 import StateHistory from './StateHistory'
 
-import wrap from './utils/manipulate-state/wrap'
-import list from './utils/manipulate-state/list'
-import linkOrImage from './utils/manipulate-state/link-or-image'
-import hr from './utils/manipulate-state/horizontal-rule'
-import heading from './utils/manipulate-state/heading'
+import wrap from './manipulate-state/wrap'
+import list from './manipulate-state/list'
+import linkOrImage from './manipulate-state/link-or-image'
+import hr from './manipulate-state/horizontal-rule'
+import heading from './manipulate-state/heading'
 
 export interface IVoidFunc {
   (): void
@@ -38,18 +37,16 @@ function getStateFromTextarea(el: HTMLTextAreaElement) {
 }
 
 export default class {
-  el: HTMLTextAreaElement
-  private options: IOptions
-  private history: StateHistory
-  private unbindInput: IVoidFunc
+  readonly el: HTMLTextAreaElement
+  private readonly options: IOptions
+  private readonly history: StateHistory
+  private readonly unbindInput: IVoidFunc
 
   constructor(
     el: string | HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void),
     options?: IOptions
   ) {
     const op = (this.options = Object.assign({}, defaultOptions, options))
-
-    this.history = new StateHistory(op.maxRecords)
 
     let element: HTMLTextAreaElement
     if (typeof el === 'string') {
@@ -66,6 +63,7 @@ export default class {
       element = el
     }
     this.el = element
+    this.history = new StateHistory(element, op.maxRecords)
 
     this.unbindInput = addEvent(
       element,
@@ -78,81 +76,86 @@ export default class {
   }
 
   saveState() {
-    this.history.push(getStateFromTextarea(this.el))
+    this.history.push()
+    this.el.focus()
   }
 
   undo() {
-    this.apply(this.history.go(-1), false)
+    this.history.go(-1)
+    this.el.focus()
   }
 
   redo() {
-    this.apply(this.history.go(1), false)
+    this.history.go(1)
+    this.el.focus()
   }
 
   bold() {
-    this.apply(wrap(this.el, '**'))
+    wrap(this.el, '**')
+    this.saveState()
   }
 
   italic() {
-    this.apply(wrap(this.el, '_'))
+    wrap(this.el, '_')
+    this.saveState()
   }
 
   strikethrough() {
-    this.apply(wrap(this.el, '~~'))
+    wrap(this.el, '~~')
+    this.saveState()
   }
 
   inlineCode() {
-    this.apply(wrap(this.el, '`'))
+    wrap(this.el, '`')
+    this.saveState()
   }
 
   blockCode() {
     const newlinePad = padNewLines(this.el)
-    return this.apply(
-      wrap(this.el, {
-        intro: newlinePad.before + '```\n',
-        outro: '\n```' + newlinePad.after
-      })
-    )
+    wrap(this.el, {
+      intro: newlinePad.before + '```\n',
+      outro: '\n```' + newlinePad.after
+    })
+    this.saveState()
   }
 
   ul() {
-    this.apply(list(this.el, '- '))
+    list(this.el, '- ')
+    this.saveState()
   }
 
   ol() {
-    this.apply(list(this.el, index => `${index + 1}. `))
+    list(this.el, index => `${index + 1}. `)
+    this.saveState()
   }
 
   quote() {
-    this.apply(list(this.el, '> ', 1))
+    list(this.el, '> ', 1)
+    this.saveState()
   }
 
   task() {
-    this.apply(list(this.el, '- [ ] '))
+    list(this.el, '- [ ] ')
+    this.saveState()
   }
 
   link(url?: string, text?: string) {
-    this.apply(linkOrImage(this.el, url, text, true))
+    linkOrImage(this.el, url, text, true)
+    this.saveState()
   }
 
   image(url?: string, text?: string) {
-    this.apply(linkOrImage(this.el, url, text))
+    linkOrImage(this.el, url, text)
+    this.saveState()
   }
 
   hr() {
-    this.apply(hr(this.el))
+    hr(this.el)
+    this.saveState()
   }
 
   heading(level: 1 | 2 | 3 | 4 | 5 | 6) {
-    this.apply(heading(this.el, level))
-  }
-
-  private apply(state?: IState, save = true) {
-    if (state) {
-      Object.assign(this.el, state)
-      if (save) {
-        this.history.push(state)
-      }
-    }
+    heading(this.el, level)
+    this.saveState()
   }
 }

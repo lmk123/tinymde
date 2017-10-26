@@ -1,5 +1,5 @@
-import { IState } from './types'
-import stringSplice from '../string-splice'
+import { IState } from '../types'
+import stringSplice from '../utils/string-splice'
 
 export interface IInterOutro {
   intro: string
@@ -24,15 +24,13 @@ function getInOut(inOut: TStringOrIntroOutro): IInterOutro {
 export default function(state: IState, introOutro: TStringOrIntroOutro) {
   const { intro, outro } = getInOut(introOutro)
   const { selectionStart, selectionEnd, value } = state
-  const newState = {} as IState
-  newState.value = stringSplice(
+  state.value = stringSplice(
     value,
     selectionStart,
     selectionEnd - selectionStart,
     intro + value.slice(selectionStart, selectionEnd) + outro
   )
   const selectionOffset = intro.length
-  newState.selectionStart = selectionStart + selectionOffset
-  newState.selectionEnd = selectionEnd + selectionOffset
-  return newState
+  state.selectionStart = selectionStart + selectionOffset
+  state.selectionEnd = selectionEnd + selectionOffset
 }

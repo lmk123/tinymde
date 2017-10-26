@@ -1,5 +1,8 @@
-import { IState } from './types'
-import stringSplice from '../string-splice'
+import { IState } from '../types'
+import stringSplice from '../utils/string-splice'
+
+const defaultURL = 'url'
+const defaultURLLength = defaultURL.length
 
 /**
  * link() 与 image() 的底层方法。
@@ -21,7 +24,7 @@ export default function(
 
   if (!url) {
     noUrl = true
-    url = 'url'
+    url = defaultURL
   }
 
   let intro = (isLink ? '' : '!') + '['
@@ -30,8 +33,8 @@ export default function(
   const outroOut = ')'
 
   const newString = intro + text + outroIn + url + outroOut
-  const newState = {} as IState
-  newState.value = stringSplice(
+
+  state.value = stringSplice(
     value,
     selectionStart,
     selectionEnd - selectionStart,
@@ -40,18 +43,15 @@ export default function(
 
   if (!noUrl && text) {
     // 如果既有 url 也有 text，则将光标放在最后面
-    newState.selectionEnd = newState.selectionStart =
+    state.selectionEnd = state.selectionStart =
       selectionStart + newString.length
   } else if (!text) {
     // 如果没有描述，则将光标放在描述里
-    newState.selectionStart = newState.selectionEnd =
-      selectionStart + intro.length
+    state.selectionStart = state.selectionEnd = selectionStart + intro.length
   } else if (noUrl) {
     // 如果有描述但没有 url，则将光标放在 url 里
     const start = selectionStart + intro.length + text.length + outroIn.length
-    newState.selectionStart = start
-    newState.selectionEnd = start + 3 /* 'url'.length */
+    state.selectionStart = start
+    state.selectionEnd = start + defaultURLLength
   }
-
-  return newState
 }
