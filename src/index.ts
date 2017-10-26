@@ -83,26 +83,31 @@ export default class {
   }
 
   bold() {
+    this.saveState()
     wrap(this.el, '**')
     this.saveState()
   }
 
   italic() {
+    this.saveState()
     wrap(this.el, '_')
     this.saveState()
   }
 
   strikethrough() {
+    this.saveState()
     wrap(this.el, '~~')
     this.saveState()
   }
 
   inlineCode() {
+    this.saveState()
     wrap(this.el, '`')
     this.saveState()
   }
 
   blockCode() {
+    this.saveState()
     const newlinePad = padNewLines(this.el)
     wrap(this.el, {
       intro: newlinePad.before + '```\n',
@@ -112,41 +117,49 @@ export default class {
   }
 
   ul() {
+    this.saveState()
     list(this.el, '- ')
     this.saveState()
   }
 
   ol() {
+    this.saveState()
     list(this.el, index => `${index + 1}. `)
     this.saveState()
   }
 
   quote() {
+    this.saveState()
     list(this.el, '> ', 1)
     this.saveState()
   }
 
   task() {
+    this.saveState()
     list(this.el, '- [ ] ')
     this.saveState()
   }
 
   link(url?: string, text?: string) {
+    this.saveState()
     linkOrImage(this.el, url, text, true)
     this.saveState()
   }
 
   image(url?: string, text?: string) {
+    this.saveState()
     linkOrImage(this.el, url, text)
     this.saveState()
   }
 
   hr() {
+    this.saveState()
     hr(this.el)
     this.saveState()
   }
 
   heading(level: 1 | 2 | 3 | 4 | 5 | 6) {
+    this.saveState()
     heading(this.el, level)
     this.saveState()
   }

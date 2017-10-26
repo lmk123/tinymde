@@ -18,5 +18,5 @@ export default function(state: IState) {
     before + symbol + after
   )
   state.selectionStart = state.selectionEnd =
-    selectionStart + before.length + symbolLength + after.length + 1
+    selectionStart + before.length + symbolLength + after.length
 }

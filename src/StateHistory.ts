@@ -1,5 +1,4 @@
-import copyState from './utils/copy-state'
-import assign from './utils/assign'
+import { copy, merge, isEqual } from './utils/state'
 import { IState } from './types'
 
 export default class StateHistory {
@@ -16,12 +15,12 @@ export default class StateHistory {
   }
 
   push() {
-    const state = copyState(this.state)
-    const { history, current } = this
+    const { history, current, state } = this
+    if (isEqual(history[current], state)) return
 
+    const copyState = copy(state)
     // 删除后面的状态并添加新状态
-    history.splice(current + 1, history.length - current, state)
-
+    history.splice(current + 1, history.length - current, copyState)
     // 如果更新后记录超出最大记录数则删除最前面的记录
     if (history.length > this.max) {
       history.shift()
@@ -33,9 +32,9 @@ export default class StateHistory {
 
   go(count: number) {
     const newIndex = this.current + count
-    if (newIndex >= 0 && newIndex < this.current) {
+    if (newIndex >= 0 && newIndex < this.history.length) {
       this.current = newIndex
-      assign(this.state, this.history[newIndex])
+      merge(this.state, this.history[newIndex])
     }
   }
 
