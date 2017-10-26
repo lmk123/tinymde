@@ -27,7 +27,7 @@ export default function(state: IState, introOutro: TStringOrIntroOutro) {
   state.value = stringSplice(
     value,
     selectionStart,
-    selectionEnd - selectionStart,
+    selectionEnd,
     intro + value.slice(selectionStart, selectionEnd) + outro
   )
   const selectionOffset = intro.length

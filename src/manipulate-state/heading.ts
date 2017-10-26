@@ -13,7 +13,7 @@ export default function(state: IState, level: 1 | 2 | 3 | 4 | 5 | 6) {
 
   // 插入 # 号
   const fragment = repeat('#', level) + ' '
-  state.value = splice(value, brIndex, 0, fragment)
+  state.value = splice(value, brIndex, brIndex, fragment)
   state.selectionStart = selectionStart + fragment.length
   state.selectionEnd = selectionEnd + fragment.length
 }

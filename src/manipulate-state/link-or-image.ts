@@ -34,12 +34,7 @@ export default function(
 
   const newString = intro + text + outroIn + url + outroOut
 
-  state.value = stringSplice(
-    value,
-    selectionStart,
-    selectionEnd - selectionStart,
-    newString
-  )
+  state.value = stringSplice(value, selectionStart, selectionEnd, newString)
 
   if (!noUrl && text) {
     // 如果既有 url 也有 text，则将光标放在最后面

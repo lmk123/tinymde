@@ -52,12 +52,7 @@ export default function(
   // 最终的文本 = 前置换行符 + 第一个列表符号 + 在内容中添加过列表符号的文本 + 后置换行符
   newString = before + firstSymbol + newString + after
 
-  state.value = stringSplice(
-    value,
-    selectionStart,
-    selectionEnd - selectionStart,
-    newString
-  )
+  state.value = stringSplice(value, selectionStart, selectionEnd, newString)
 
   // 因为不想选中前 后添加的换行符，
   // 所以选中的开始位置要加上前置换行符的长度，

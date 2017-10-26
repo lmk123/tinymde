@@ -14,7 +14,7 @@ export default function(state: IState) {
   state.value = splice(
     state.value,
     selectionStart,
-    state.selectionEnd - selectionStart,
+    state.selectionEnd,
     before + symbol + after
   )
   state.selectionStart = state.selectionEnd =
