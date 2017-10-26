@@ -1,4 +1,5 @@
 import copyState from './utils/copy-state'
+import assign from './utils/assign'
 import { IState } from './types'
 
 export default class StateHistory {
@@ -34,7 +35,7 @@ export default class StateHistory {
     const newIndex = this.current + count
     if (newIndex >= 0 && newIndex < this.current) {
       this.current = newIndex
-      Object.assign(this.state, this.history[newIndex])
+      assign(this.state, this.history[newIndex])
     }
   }
 

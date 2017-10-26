@@ -2,6 +2,7 @@ import noop from './utils/noop'
 import addEvent from './utils/add-event'
 import debounce from './utils/debounce'
 import padNewLines from './utils/pad-newlines'
+import assign from './utils/assign'
 
 import StateHistory from './StateHistory'
 
@@ -37,7 +38,7 @@ export default class {
     el: string | HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void),
     options?: IOptions
   ) {
-    const op = (this.options = Object.assign({}, defaultOptions, options))
+    const op = (this.options = assign({}, defaultOptions, options))
 
     let element: HTMLTextAreaElement
     if (typeof el === 'string') {
