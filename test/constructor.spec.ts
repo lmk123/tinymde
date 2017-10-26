@@ -4,12 +4,12 @@ describe('初始化构造函数时', () => {
   it('第一个参数可以是字符串、节点或函数', () => {
     const t = document.createElement('textarea')
     document.body.appendChild(t)
-
     const m = new TinyMDE('textarea')
     expect(m.el).toBe(t)
 
-    const m2 = new TinyMDE(t)
-    expect(m.el).toBe(t)
+    const t2 = document.createElement('textarea')
+    const m2 = new TinyMDE(t2)
+    expect(m2.el).toBe(t)
 
     let e: HTMLTextAreaElement
     const m3 = new TinyMDE(el => {
