@@ -1,6 +1,5 @@
 import { IState } from '../types'
 import padNewlines from '../utils/pad-newlines'
-import repeat from '../utils/string-repeat'
 import stringSplice from '../utils/string-splice'
 
 interface IRegs {

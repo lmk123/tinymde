@@ -1,4 +1,3 @@
-import { IState } from './types'
 import noop from './utils/noop'
 import addEvent from './utils/add-event'
 import debounce from './utils/debounce'
@@ -26,14 +25,6 @@ const defaultOptions = {
   maxRecords: 100,
   saveDelay: 3000,
   onSave: noop
-}
-
-function getStateFromTextarea(el: HTMLTextAreaElement) {
-  return {
-    selectionStart: el.selectionStart,
-    selectionEnd: el.selectionEnd,
-    value: el.value
-  }
 }
 
 export default class {

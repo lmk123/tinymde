@@ -1,6 +1,5 @@
 import { IState } from '../types'
 import padNewLines from '../utils/pad-newlines'
-import repeat from '../utils/string-repeat'
 import splice from '../utils/string-splice'
 
 const symbol = '* * *'
@@ -12,7 +11,6 @@ const symbolLength = symbol.length
 export default function(state: IState) {
   const { before, after } = padNewLines(state)
   const { selectionStart } = state
-  const newState = {} as IState
   state.value = splice(
     state.value,
     selectionStart,
