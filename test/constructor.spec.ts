@@ -9,7 +9,7 @@ describe('初始化构造函数时', () => {
 
     const t2 = document.createElement('textarea')
     const m2 = new TinyMDE(t2)
-    expect(m2.el).toBe(t)
+    expect(m2.el).toBe(t2)
 
     let e: HTMLTextAreaElement
     const m3 = new TinyMDE(el => {
