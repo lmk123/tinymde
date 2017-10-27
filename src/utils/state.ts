@@ -9,6 +9,7 @@ export function copy(state: IState) {
 }
 
 export function merge(target: IState, newState: IState) {
+  // 需要先设置 value，否则选中位置会被重置到文本末尾
   target.value = newState.value
   target.selectionStart = newState.selectionStart
   target.selectionEnd = newState.selectionEnd

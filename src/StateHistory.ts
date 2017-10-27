@@ -3,9 +3,9 @@ import { IState } from './types'
 
 export default class StateHistory {
   private readonly state: IState
+  history: IState[]
+  current: number
   private readonly max: number
-  private history: IState[]
-  private current: number
 
   constructor(state: IState, max = 50) {
     this.state = state
