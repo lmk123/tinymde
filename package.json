@@ -10,7 +10,11 @@
   "module": "dist/tinymde.esm.js",
   "unpkg": "dist/tinymde.js",
   "types": "declaration/src/index.d.ts",
-  "files": ["src", "dist", "declaration/src"],
+  "files": [
+    "src",
+    "dist",
+    "declaration/src"
+  ],
   "scripts": {
     "dev": "rollup -c build/dev.js -w",
     "lint": "tslint -p tsconfig.json -t verbose",
@@ -35,13 +39,13 @@
     "rollup-plugin-buble": "^0.16.0",
     "rollup-plugin-livereload": "^0.6.0",
     "rollup-plugin-serve": "^0.4.2",
-    "rollup-plugin-typescript2": "^0.7.0",
+    "rollup-plugin-typescript2": "^0.8.0",
     "rollup-watch": "^4.3.1",
     "tslint": "^5.8.0",
     "tslint-config-prettier": "^1.6.0",
-    "tslint-config-standard": "^6.0.1",
-    "typescript": "^2.5.3",
-    "uglify-js": "^3.1.5"
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "^2.6.1",
+    "uglify-js": "^3.1.6"
   },
   "license": "MIT"
 }
