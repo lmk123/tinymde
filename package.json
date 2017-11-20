@@ -16,7 +16,7 @@
     "declaration/src"
   ],
   "scripts": {
-    "dev": "rollup -c build/dev.js -w",
+    "start": "rollup -c build/dev.js -w",
     "lint": "tslint -p tsconfig.json -t verbose",
     "build": "node build/build.js",
     "test": "karma start",
@@ -35,17 +35,17 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-safari-launcher": "^1.0.0",
     "karma-typescript": "^3.0.8",
-    "rollup": "^0.50.0",
-    "rollup-plugin-buble": "^0.16.0",
+    "rollup": "^0.50.1",
+    "rollup-plugin-buble": "^0.18.0",
     "rollup-plugin-livereload": "^0.6.0",
     "rollup-plugin-serve": "^0.4.2",
-    "rollup-plugin-typescript2": "^0.8.0",
+    "rollup-plugin-typescript2": "^0.8.1",
     "rollup-watch": "^4.3.1",
     "tslint": "^5.8.0",
     "tslint-config-prettier": "^1.6.0",
     "tslint-config-standard": "^7.0.0",
     "typescript": "^2.6.1",
-    "uglify-js": "^3.1.6"
+    "uglify-js": "^3.1.10"
   },
   "license": "MIT"
 }
