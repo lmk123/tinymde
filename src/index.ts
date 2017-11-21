@@ -23,7 +23,7 @@ export interface IOptions {
 }
 
 const defaultOptions = {
-  maxRecords: 100,
+  maxRecords: 50,
   saveDelay: 3000,
   onSave: noop
 }
