@@ -10,9 +10,9 @@ describe('hr() 方法的作用是添加水平分割线并且光标永远固定�
     }
     hr(state)
     expect(state).toEqual({
-      value: '\n\n* * *\n\nabc\n\ndef',
-      selectionStart: 9,
-      selectionEnd: 9
+      value: '* * *\n\nabc\n\ndef',
+      selectionStart: 7,
+      selectionEnd: 7
     })
   })
 
@@ -47,8 +47,8 @@ describe('hr() 方法的作用是添加水平分割线并且光标永远固定�
   it('光标在结尾时', () => {
     const state = {
       value,
-      selectionStart: value.length - 1,
-      selectionEnd: value.length - 1
+      selectionStart: value.length,
+      selectionEnd: value.length
     }
     hr(state)
     expect(state).toEqual({

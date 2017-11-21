@@ -12,10 +12,12 @@ export default function(state: IState, count = 2) {
 
   // 先检查需要多少个前置换行符
   let before = count
+  let beforeEdge = false
   for (let i = 1; i <= count; i++) {
     const startIndex = selectionStart - i
     if (startIndex < 0) {
       before = 0
+      beforeEdge = true
       break
     }
     if (value[startIndex] === '\n') {
@@ -28,10 +30,12 @@ export default function(state: IState, count = 2) {
   // 再检查需要多少个后置换行符
   const { length } = value
   let after = count
+  let afterEdge = false
   for (let i = 0; i < count; i++) {
     const endIndex = selectionEnd + i
     if (endIndex >= length) {
       after = 0
+      afterEdge = true
       break
     }
     if (value[endIndex] === '\n') {
@@ -43,6 +47,8 @@ export default function(state: IState, count = 2) {
 
   return {
     before: repeat('\n', before),
-    after: repeat('\n', after)
+    beforeEdge,
+    after: repeat('\n', after),
+    afterEdge
   }
 }

@@ -9,8 +9,11 @@ const symbolLength = symbol.length
  * 水平分割线
  */
 export default function(state: IState) {
-  const { before, after } = padNewLines(state)
+  let { before, after, afterEdge } = padNewLines(state)
   const { selectionStart } = state
+  if (!after && afterEdge) {
+    after = '\n\n'
+  }
   state.value = splice(
     state.value,
     selectionStart,
@@ -18,5 +21,8 @@ export default function(state: IState) {
     before + symbol + after
   )
   state.selectionStart = state.selectionEnd =
-    selectionStart + before.length + symbolLength + after.length
+    selectionStart +
+    before.length +
+    symbolLength +
+    2 /* 永远往后偏移两个字符，不管 after 的换行个数 */
 }
