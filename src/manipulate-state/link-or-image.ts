@@ -44,4 +44,5 @@ export default function(state: IState, url = '', text = '', isLink?: boolean) {
     state.selectionStart = start
     state.selectionEnd = start + defaultURLLength
   }
+  return state
 }

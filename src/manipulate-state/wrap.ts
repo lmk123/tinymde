@@ -33,4 +33,5 @@ export default function(state: IState, introOutro: TStringOrIntroOutro) {
   const selectionOffset = intro.length
   state.selectionStart = selectionStart + selectionOffset
   state.selectionEnd = selectionEnd + selectionOffset
+  return state
 }

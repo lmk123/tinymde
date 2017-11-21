@@ -16,4 +16,5 @@ export default function(state: IState, level: 1 | 2 | 3 | 4 | 5 | 6) {
   state.value = splice(value, brIndex, brIndex, fragment)
   state.selectionStart = selectionStart + fragment.length
   state.selectionEnd = selectionEnd + fragment.length
+  return state
 }

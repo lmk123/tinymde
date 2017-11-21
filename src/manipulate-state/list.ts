@@ -65,4 +65,5 @@ export default function(
     state.selectionStart = state.selectionEnd =
       selectionStart + before.length + firstSymbol.length
   }
+  return state
 }

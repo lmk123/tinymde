@@ -67,6 +67,12 @@ export default class {
     )
   }
 
+  private manipulate(action: () => void) {
+    this.saveState()
+    action()
+    this.saveState()
+  }
+
   saveState() {
     this.history.push()
     this.el.focus()
@@ -83,84 +89,84 @@ export default class {
   }
 
   bold() {
-    this.saveState()
-    wrap(this.el, '**')
-    this.saveState()
+    this.manipulate(() => {
+      wrap(this.el, '**')
+    })
   }
 
   italic() {
-    this.saveState()
-    wrap(this.el, '_')
-    this.saveState()
+    this.manipulate(() => {
+      wrap(this.el, '_')
+    })
   }
 
   strikethrough() {
-    this.saveState()
-    wrap(this.el, '~~')
-    this.saveState()
+    this.manipulate(() => {
+      wrap(this.el, '~~')
+    })
   }
 
   inlineCode() {
-    this.saveState()
-    wrap(this.el, '`')
-    this.saveState()
+    this.manipulate(() => {
+      wrap(this.el, '`')
+    })
   }
 
   blockCode() {
-    this.saveState()
-    const newlinePad = padNewLines(this.el)
-    wrap(this.el, {
-      intro: newlinePad.before + '```\n',
-      outro: '\n```' + newlinePad.after
+    this.manipulate(() => {
+      const newlinePad = padNewLines(this.el)
+      wrap(this.el, {
+        intro: newlinePad.before + '```\n',
+        outro: '\n```' + newlinePad.after
+      })
     })
-    this.saveState()
   }
 
   ul() {
-    this.saveState()
-    list(this.el, '- ')
-    this.saveState()
+    this.manipulate(() => {
+      list(this.el, '- ')
+    })
   }
 
   ol() {
-    this.saveState()
-    list(this.el, index => `${index + 1}. `)
-    this.saveState()
+    this.manipulate(() => {
+      list(this.el, index => `${index + 1}. `)
+    })
   }
 
   quote() {
-    this.saveState()
-    list(this.el, '> ', 1)
-    this.saveState()
+    this.manipulate(() => {
+      list(this.el, '> ', 1)
+    })
   }
 
   task() {
-    this.saveState()
-    list(this.el, '- [ ] ')
-    this.saveState()
+    this.manipulate(() => {
+      list(this.el, '- [ ] ')
+    })
   }
 
   link(url?: string, text?: string) {
-    this.saveState()
-    linkOrImage(this.el, url, text, true)
-    this.saveState()
+    this.manipulate(() => {
+      linkOrImage(this.el, url, text, true)
+    })
   }
 
   image(url?: string, text?: string) {
-    this.saveState()
-    linkOrImage(this.el, url, text)
-    this.saveState()
+    this.manipulate(() => {
+      linkOrImage(this.el, url, text)
+    })
   }
 
   hr() {
-    this.saveState()
-    hr(this.el)
-    this.saveState()
+    this.manipulate(() => {
+      hr(this.el)
+    })
   }
 
   heading(level: 1 | 2 | 3 | 4 | 5 | 6) {
-    this.saveState()
-    heading(this.el, level)
-    this.saveState()
+    this.manipulate(() => {
+      heading(this.el, level)
+    })
   }
 }

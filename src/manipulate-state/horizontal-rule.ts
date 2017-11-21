@@ -25,4 +25,5 @@ export default function(state: IState) {
     before.length +
     symbolLength +
     2 /* 永远往后偏移两个字符，不管 after 的换行个数 */
+  return state
 }
