@@ -6,7 +6,8 @@ export interface IRepeatFunc {
  * 重复字符串
  */
 const repeat: IRepeatFunc = String.prototype.repeat
-  ? function(str, count) {
+  ? /* istanbul ignore next */
+    function(str, count) {
       return str.repeat(count)
     }
   : function(str, count) {

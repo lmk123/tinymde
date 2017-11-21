@@ -54,9 +54,15 @@ export default function(
 
   state.value = stringSplice(value, selectionStart, selectionEnd, newString)
 
-  // 因为不想选中前 后添加的换行符，
-  // 所以选中的开始位置要加上前置换行符的长度，
-  // 选中的结束位置要减去后置换行符的长度
-  state.selectionStart = selectionStart + before.length
-  state.selectionEnd = selectionStart + newString.length - after.length
+  if (selectedString) {
+    // 因为不想选中前 后添加的换行符，
+    // 所以选中的开始位置要加上前置换行符的长度，
+    // 选中的结束位置要减去后置换行符的长度
+    state.selectionStart = selectionStart + before.length
+    state.selectionEnd = selectionStart + newString.length - after.length
+  } else {
+    // 若没有选中文本，则直接将光标置于符号后面
+    state.selectionStart = state.selectionEnd =
+      selectionStart + before.length + firstSymbol.length
+  }
 }
