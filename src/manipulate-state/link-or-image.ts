@@ -7,12 +7,7 @@ const defaultURLLength = defaultURL.length
 /**
  * link() 与 image() 的底层方法。
  */
-export default function(
-  state: IState,
-  url = '',
-  text?: string,
-  isLink?: boolean
-) {
+export default function(state: IState, url = '', text = '', isLink?: boolean) {
   const { selectionStart, selectionEnd, value } = state
   const selectedText = value.slice(selectionStart, selectionEnd)
 
@@ -43,7 +38,7 @@ export default function(
   } else if (!text) {
     // 如果没有描述，则将光标放在描述里
     state.selectionStart = state.selectionEnd = selectionStart + intro.length
-  } else if (noUrl) {
+  } else {
     // 如果有描述但没有 url，则将光标放在 url 里
     const start = selectionStart + intro.length + text.length + outroIn.length
     state.selectionStart = start
