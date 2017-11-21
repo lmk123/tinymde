@@ -13,7 +13,6 @@ const brReg = /\n{1}/g
  * @param pattern 每一行后面要添加的前缀，可以提供一个方法动态生成，例如有序列表就需要添加递增的数字前缀
  */
 export default function(state: IState, pattern: string | ISymbolFunc) {
-  const addSymbolLinesCount = 1
   let symbolFunc: ISymbolFunc
 
   if (typeof pattern === 'string') {
