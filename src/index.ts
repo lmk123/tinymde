@@ -128,7 +128,7 @@ export default class {
 
   quote() {
     this.manipulate(() => {
-      list(this.el, '> ', 1)
+      list(this.el, '> ')
     })
   }
 
