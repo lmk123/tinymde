@@ -71,11 +71,11 @@ export default class {
     this.saveState()
     action()
     this.saveState()
+    this.el.focus()
   }
 
   saveState() {
     this.history.push()
-    this.el.focus()
   }
 
   undo() {
