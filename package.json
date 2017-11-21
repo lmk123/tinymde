@@ -10,17 +10,14 @@
   "module": "dist/tinymde.esm.js",
   "unpkg": "dist/tinymde.js",
   "types": "declaration/src/index.d.ts",
-  "files": [
-    "src",
-    "dist",
-    "declaration/src"
-  ],
+  "files": ["src", "dist", "declaration/src"],
   "scripts": {
     "start": "rollup -c build/dev.js -w",
     "lint": "tslint -p tsconfig.json -t verbose",
     "build": "node build/build.js",
     "test": "karma start",
-    "prepublishOnly": "npm run lint && npm run build"
+    "prepublishOnly":
+      "npm run lint && npm test -- --single-run && npm run build"
   },
   "devDependencies": {
     "@types/karma-jasmine": "0.0.29",

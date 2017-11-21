@@ -32,7 +32,6 @@ export default class {
   readonly el: HTMLTextAreaElement
   private readonly options: IOptions
   private readonly history: StateHistory
-  private readonly unbindInput: IVoidFunc
 
   constructor(
     el: string | HTMLTextAreaElement | ((el: HTMLTextAreaElement) => void),
@@ -57,7 +56,7 @@ export default class {
     this.el = element
     this.history = new StateHistory(element, op.maxRecords)
 
-    this.unbindInput = addEvent(
+    addEvent(
       element,
       'input',
       debounce(() => {
@@ -65,13 +64,6 @@ export default class {
         op.onSave()
       }, op.saveDelay)
     )
-  }
-
-  private manipulate(action: () => void) {
-    this.saveState()
-    action()
-    this.saveState()
-    this.el.focus()
   }
 
   saveState() {
@@ -168,5 +160,12 @@ export default class {
     this.manipulate(() => {
       heading(this.el, level)
     })
+  }
+
+  private manipulate(action: () => void) {
+    this.saveState()
+    action()
+    this.saveState()
+    this.el.focus()
   }
 }

@@ -2,9 +2,9 @@ import { copy, merge, isEqual } from './utils/state'
 import { IState } from './types'
 
 export default class StateHistory {
-  private readonly state: IState
   history: IState[]
   current: number
+  private readonly state: IState
   private readonly max: number
 
   constructor(state: IState, max = 50) {

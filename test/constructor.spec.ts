@@ -16,7 +16,8 @@ describe('初始化构造函数时', () => {
       e = el
     })
 
-    expect(m3.el).toBe(e!)
+    // @ts-ignore
+    expect(m3.el).toBe(e)
   })
 
   it('当第一个参数是字符串时，如果找不到这个元素或这个元素不是 textarea 则报错', () => {

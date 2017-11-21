@@ -5,7 +5,7 @@ node_js:
 
 script:
   - npm run lint
-  - npm test
+  - npm test -- --single-run
   - cat ./coverage/lcov/lcovonly | ./node_modules/coveralls/bin/coveralls.js
 
 notifications:
