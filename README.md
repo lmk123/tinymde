@@ -2,6 +2,8 @@
 
 TinyMDE 是一个运行在浏览器中的 Markdown 文本编辑器，它提供了一些 API 以便生成特定的 Markdown 语法，例如链接、图片、列表等。
 
+[查看在线演示](https://lmk123.github.io/tinymde/index.html)
+
 ## 安装
 
 ### 用 NPM 安装
