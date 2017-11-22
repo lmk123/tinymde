@@ -24,11 +24,13 @@ function tryUnWrap(char: string) {
     const { value, selectionStart, selectionEnd } = state
     const { length } = char
     const wrapStart = selectionStart - length
+    if (wrapStart < 0) return
     const wrapEnd = selectionEnd + length
-    if (wrapStart < 0 || wrapEnd > value.length) return
+    if (wrapEnd > value.length) return
     const startChar = value.slice(wrapStart, selectionStart)
+    if (startChar !== char) return
     const endChar = value.slice(selectionEnd, wrapEnd)
-    if (startChar !== endChar || startChar !== char) return
+    if (startChar !== endChar) return
     const selectedStr = value.slice(selectionStart, selectionEnd)
     state.value = stringSplice(value, wrapStart, wrapEnd, selectedStr)
     state.selectionStart = wrapStart
