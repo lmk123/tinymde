@@ -7,7 +7,7 @@ export default class StateHistory {
   private readonly state: IState
   private readonly max: number
 
-  constructor(state: IState, max = 50) {
+  constructor(state: IState, max: number) {
     this.state = state
     this.max = max
     this.clear()
