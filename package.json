@@ -1,6 +1,6 @@
 {
   "name": "tinymde",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Tiny Markdown editor.",
   "repository": {
     "type": "git",
@@ -10,7 +10,7 @@
   "module": "dist/tinymde.esm.js",
   "unpkg": "dist/tinymde.js",
   "types": "declaration/src/index.d.ts",
-  "files": ["src", "dist", "declaration/src"],
+  "files": ["dist", "declaration/src"],
   "scripts": {
     "start": "rollup -c build/dev.js -w",
     "lint": "tslint -p tsconfig.json -t verbose",
