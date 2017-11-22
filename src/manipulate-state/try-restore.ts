@@ -24,13 +24,13 @@ function tryUnWrap(char: string) {
     const { value, selectionStart, selectionEnd } = state
     const { length } = char
     const wrapStart = selectionStart - length
-    if (wrapStart < 0) return
+    if (wrapStart < 0) return false
     const wrapEnd = selectionEnd + length
-    if (wrapEnd > value.length) return
+    if (wrapEnd > value.length) return false
     const startChar = value.slice(wrapStart, selectionStart)
-    if (startChar !== char) return
+    if (startChar !== char) return false
     const endChar = value.slice(selectionEnd, wrapEnd)
-    if (startChar !== endChar) return
+    if (startChar !== endChar) return false
     const selectedStr = value.slice(selectionStart, selectionEnd)
     state.value = stringSplice(value, wrapStart, wrapEnd, selectedStr)
     state.selectionStart = wrapStart
@@ -45,7 +45,7 @@ function blockCode(state: IState) {
   // 判断选中文本后四个字符是否是 \n```。如果没有触到文本结尾，则要多判断一个换行
   const { length } = value
   let wrapEnd = selectionEnd + 4
-  if (wrapEnd > length) return
+  if (wrapEnd > length) return false
   let endEdge
   if (wrapEnd === length) {
     endEdge = true
@@ -53,11 +53,11 @@ function blockCode(state: IState) {
     wrapEnd += 1
   }
   if (value.slice(selectionEnd, wrapEnd) !== '\n```' + (endEdge ? '' : '\n')) {
-    return
+    return false
   }
   // 判断选中文本前一个字符是否是 \n
   const prevInedex = selectionStart - 1
-  if (value[prevInedex] !== '\n') return
+  if (value[prevInedex] !== '\n') return false
   // 判断前面的一行是否以 \n``` 开头。如果触到了文本开头，则不要求有第一个换行符。
   let wrapStart = value.lastIndexOf('\n', prevInedex - 1)
   let startEdge
@@ -69,7 +69,7 @@ function blockCode(state: IState) {
     value.slice(wrapStart, wrapStart + (startEdge ? 3 : 4)) !==
     (startEdge ? '' : '\n') + '```'
   ) {
-    return
+    return false
   }
   const selectedStr = value.slice(selectionStart, selectionEnd)
   // 暂时不要去掉额外的换行符
@@ -97,7 +97,7 @@ function tryUnlist(regStr: string) {
     // 判断整个选中文本是否符合 list 条件
     const selectedStr = value.slice(selectionStart, selectionEnd)
     const wholeReg = createRegExp(`^(${regStr}[^\\n]*\\n?)+$`)
-    if (!wholeReg.test(selectedStr)) return
+    if (!wholeReg.test(selectedStr)) return false
 
     const tripSymbol = selectedStr.replace(createRegExp(regStr, 'g'), '')
     state.value = stringSplice(value, selectionStart, selectionEnd, tripSymbol)
