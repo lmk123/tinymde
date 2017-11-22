@@ -11,7 +11,7 @@ import list from './manipulate-state/list'
 import linkOrImage from './manipulate-state/link-or-image'
 import hr from './manipulate-state/horizontal-rule'
 import heading from './manipulate-state/heading'
-import tryRestore from './manipulate-state/try-restore'
+import tryRestore, { KeyOfRestoreFns } from './manipulate-state/try-restore'
 
 export interface IVoidFunc {
   (): void
@@ -163,7 +163,7 @@ export default class {
     })
   }
 
-  private manipulate(action: () => void, type?: string) {
+  private manipulate(action: () => void, type?: KeyOfRestoreFns) {
     if (!type || !tryRestore(this.el, type)) {
       this.saveState()
       action()
