@@ -11,6 +11,7 @@ import list from './manipulate-state/list'
 import linkOrImage from './manipulate-state/link-or-image'
 import hr from './manipulate-state/horizontal-rule'
 import heading from './manipulate-state/heading'
+import tryRestore from './manipulate-state/try-restore'
 
 export interface IVoidFunc {
   (): void
@@ -83,25 +84,25 @@ export default class {
   bold() {
     this.manipulate(() => {
       wrap(this.el, '**')
-    })
+    }, 'bold')
   }
 
   italic() {
     this.manipulate(() => {
       wrap(this.el, '_')
-    })
+    }, 'italic')
   }
 
   strikethrough() {
     this.manipulate(() => {
       wrap(this.el, '~~')
-    })
+    }, 'strikethrough')
   }
 
   inlineCode() {
     this.manipulate(() => {
       wrap(this.el, '`')
-    })
+    }, 'inlineCode')
   }
 
   blockCode() {
@@ -111,31 +112,31 @@ export default class {
         intro: newlinePad.before + '```\n',
         outro: '\n```' + newlinePad.after
       })
-    })
+    }, 'blockCode')
   }
 
   ul() {
     this.manipulate(() => {
       list(this.el, '- ')
-    })
+    }, 'ul')
   }
 
   ol() {
     this.manipulate(() => {
       list(this.el, index => `${index + 1}. `)
-    })
+    }, 'ol')
   }
 
   quote() {
     this.manipulate(() => {
       list(this.el, '> ')
-    })
+    }, 'quote')
   }
 
   task() {
     this.manipulate(() => {
       list(this.el, '- [ ] ')
-    })
+    }, 'task')
   }
 
   link(url?: string, text?: string) {
@@ -162,9 +163,11 @@ export default class {
     })
   }
 
-  private manipulate(action: () => void) {
-    this.saveState()
-    action()
+  private manipulate(action: () => void, type?: string) {
+    if (!type || !tryRestore(this.el, type)) {
+      this.saveState()
+      action()
+    }
     this.saveState()
     this.el.focus()
   }
